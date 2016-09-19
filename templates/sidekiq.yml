@@ -1,0 +1,6 @@
+---
+:concurrency: <%= Integer(ENV.fetch("DB_POOL", 5)) %>
+:pidfile: tmp/pids/sidekiq.pid
+:queues:
+  - default
+  - mailers

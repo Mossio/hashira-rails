@@ -161,14 +161,11 @@ RSpec.describe "Suspend a new project with default configuration" do
     expect(layout_file).to match(/<html lang="en">/)
   end
 
-  it "configs active job queue adapter" do
-    application_config = IO.read("#{project_path}/config/application.rb")
+  it "configures the test environment to process queues inline" do
+    test_config = IO.read("#{project_path}/config/environments/test.rb")
 
-    expect(application_config).to match(
-      /^ +config.active_job.queue_adapter = :delayed_job$/
-    )
     expect(test_config).to match(
-      /^ +config.active_job.queue_adapter = :inline$/
+      "config.active_job.queue_adapter = :inline"
     )
   end
 

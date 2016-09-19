@@ -95,7 +95,6 @@ module Armadura
       build :set_up_hound
       build :generate_rspec
       build :configure_rspec
-      build :configure_background_jobs_for_rspec
       build :enable_database_cleaner
       build :provide_shoulda_matchers_config
       build :configure_spec_support_features
@@ -132,6 +131,7 @@ module Armadura
       say 'Configuring app'
       build :configure_action_mailer
       build :configure_active_job
+      build :configure_sidekiq
       build :configure_time_formats
       build :setup_default_rake_task
       build :replace_default_puma_configuration
