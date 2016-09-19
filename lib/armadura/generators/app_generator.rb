@@ -226,7 +226,6 @@ module Armadura
 
     def outro
       say 'The Rails application is now created!'
-      say honeybadger_outro
     end
 
     def self.banner
@@ -241,18 +240,6 @@ module Armadura
 
     def using_active_record?
       !options[:skip_active_record]
-    end
-
-    private
-
-    def honeybadger_outro
-      "Run 'bundle exec honeybadger heroku install' with your API key#{honeybadger_message_suffix}."
-    end
-
-    def honeybadger_message_suffix
-      if options[:heroku]
-        " unless you're using the Heroku Honeybadger add-on"
-      end
     end
   end
 end

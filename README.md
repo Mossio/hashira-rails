@@ -37,7 +37,6 @@ It includes application gems like:
 * [Flutie](https://github.com/thoughtbot/flutie) for `page_title` and `body_class` view
   helpers
 * [High Voltage](https://github.com/thoughtbot/high_voltage) for static pages
-* [Honeybadger](https://honeybadger.io) for exception notification
 * [jQuery Rails](https://github.com/rails/jquery-rails) for jQuery
 * [Neat](https://github.com/thoughtbot/neat) for semantic grids
 * [Normalize](https://necolas.github.io/normalize.css/) for resetting browser styles
@@ -50,6 +49,7 @@ It includes application gems like:
   avoid accidentally sending emails to real people from staging
 * [Refills](https://github.com/thoughtbot/refills) for “copy-paste” components
   and patterns based on Bourbon, Neat and Bitters
+* [Sentry](https://sentry.io) for exception notification
 * [Simple Form](https://github.com/plataformatec/simple_form) for form markup
   and style
 * [Skylight](https://www.skylight.io/) for monitoring performance
