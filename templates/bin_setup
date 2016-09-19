@@ -17,5 +17,6 @@ bin/rake dev:prime
 mkdir -p .git/safe
 
 # Only if this isn't CI
-# if [ -z "$CI" ]; then
-# fi
+if [ -z "$CI" ]; then
+  cp .env .env.local
+fi
