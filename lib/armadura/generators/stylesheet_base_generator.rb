@@ -1,6 +1,6 @@
 require "rails/generators"
 
-module Suspenders
+module Armadura
   class StylesheetBaseGenerator < Rails::Generators::Base
     source_root File.expand_path(
       File.join("..", "..", "..", "templates"),

@@ -2,12 +2,12 @@ require 'bundler/setup'
 
 Bundler.require(:default, :test)
 
-require (Pathname.new(__FILE__).dirname + '../lib/suspenders').expand_path
+require (Pathname.new(__FILE__).dirname + '../lib/armadura').expand_path
 
 Dir['./spec/support/**/*.rb'].each { |file| require file }
 
 RSpec.configure do |config|
-  config.include SuspendersTestHelpers
+  config.include ArmaduraTestHelpers
 
   config.before(:all) do
     add_fakes_to_path

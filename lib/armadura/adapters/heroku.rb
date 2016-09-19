@@ -1,4 +1,4 @@
-module Suspenders
+module Armadura
   module Adapters
     class Heroku
       def initialize(app_builder)

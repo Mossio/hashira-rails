@@ -1,6 +1,6 @@
 require "spec_helper"
 
-module Suspenders
+module Armadura
   module Adapters
     RSpec.describe Heroku do
       it "sets the heroku remotes" do
@@ -46,7 +46,7 @@ module Suspenders
       end
 
       def app_name
-        SuspendersTestHelpers::APP_NAME
+        ArmaduraTestHelpers::APP_NAME
       end
 
       def have_configured_var(remote_name, var)

@@ -1,4 +1,4 @@
-module SuspendersTestHelpers
+module ArmaduraTestHelpers
   APP_NAME = "dummy_app"
 
   def remove_project_directory
@@ -9,23 +9,23 @@ module SuspendersTestHelpers
     FileUtils.mkdir_p(tmp_path)
   end
 
-  def run_suspenders(arguments = nil)
+  def run_armadura(arguments = nil)
     arguments = "--path=#{root_path} #{arguments}"
     Dir.chdir(tmp_path) do
       Bundler.with_clean_env do
         add_fakes_to_path
         `
-          #{suspenders_bin} #{APP_NAME} #{arguments}
+          #{armadura_bin} #{APP_NAME} #{arguments}
         `
       end
     end
   end
 
-  def suspenders_help_command
+  def armadura_help_command
     Dir.chdir(tmp_path) do
       Bundler.with_clean_env do
         `
-          #{suspenders_bin} -h
+          #{armadura_bin} -h
         `
       end
     end
@@ -69,8 +69,8 @@ module SuspendersTestHelpers
     @tmp_path ||= Pathname.new("#{root_path}/tmp")
   end
 
-  def suspenders_bin
-    File.join(root_path, 'bin', 'suspenders')
+  def armadura_bin
+    File.join(root_path, 'bin', 'armadura')
   end
 
   def support_bin
