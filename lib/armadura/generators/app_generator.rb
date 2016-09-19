@@ -225,7 +225,7 @@ module Armadura
     end
 
     def outro
-      say 'Congratulations! You just pulled our armadura.'
+      say 'The Rails application is now created!'
       say honeybadger_outro
     end
 
