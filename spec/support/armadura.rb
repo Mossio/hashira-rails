@@ -70,7 +70,7 @@ module ArmaduraTestHelpers
   end
 
   def armadura_bin
-    File.join(root_path, 'bin', 'armadura')
+    File.join(root_path, 'exe', 'armadura')
   end
 
   def support_bin

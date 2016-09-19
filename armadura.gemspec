@@ -11,6 +11,7 @@ Gem::Specification.new do |s|
   s.summary = "Armadura generates Rails projects, preconfigured with sensible defaults."
   s.email = 'elliot.winkler@gmail.com'
   s.executables = ['armadura']
+  s.bindir = 'exe'
   s.extra_rdoc_files = %w[README.md LICENSE]
   s.files = `git ls-files`.split("\n")
   s.homepage = 'https://github.com/mcmire/armadura'
