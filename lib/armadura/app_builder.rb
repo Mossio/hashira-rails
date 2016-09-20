@@ -469,6 +469,11 @@ end
       end
     end
 
+    def add_bower
+      run "bin/rails g bower:install"
+      template "bower.json.erb", "bower.json", force: true
+    end
+
     private
 
     def raise_on_missing_translations_in(environment)

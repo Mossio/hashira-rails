@@ -5,6 +5,7 @@
 *.swp
 /.bundle
 /.env.local
+/bower_components
 /coverage/*
 /db/*.sqlite3
 /log/*

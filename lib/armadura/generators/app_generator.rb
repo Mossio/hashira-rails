@@ -137,6 +137,7 @@ module Armadura
       build :replace_default_puma_configuration
       build :set_up_forego
       build :setup_rack_mini_profiler
+      build :add_bower
     end
 
     def setup_git
