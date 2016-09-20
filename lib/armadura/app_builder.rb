@@ -461,6 +461,10 @@ end
       template "bower.json.erb", "bower.json", force: true
     end
 
+    def add_teaspoon
+      run "bin/rails g teaspoon:install"
+    end
+
     private
 
     def raise_on_missing_translations_in(environment)

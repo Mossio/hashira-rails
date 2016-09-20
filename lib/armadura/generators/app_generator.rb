@@ -138,6 +138,7 @@ module Armadura
       build :set_up_forego
       build :setup_rack_mini_profiler
       build :add_bower
+      build :add_teaspoon
     end
 
     def setup_git
