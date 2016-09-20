@@ -266,6 +266,10 @@ config.public_file_server.headers = {
       copy_file "spec_helper.rb", "spec/spec_helper.rb"
     end
 
+    def remove_test_directory
+      remove_file "test"
+    end
+
     def configure_ci
       template "circle.yml.erb", "circle.yml"
     end

@@ -271,6 +271,10 @@ RSpec.describe "Suspend a new project with default configuration" do
     expect(app_js).not_to match(/turbolinks/)
   end
 
+  it "removes the test directory" do
+    expect(File.exist?("#{project_path}/test")).to be false
+  end
+
   def development_config
     @_development_config ||=
       read_project_file %w(config environments development.rb)
