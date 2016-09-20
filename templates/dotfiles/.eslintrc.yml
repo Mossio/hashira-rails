@@ -1,0 +1,49 @@
+---
+env:
+  browser: true
+  es6: true
+  jquery: true
+extends: "eslint:recommended"
+rules:
+  array-bracket-spacing: error
+  array-callback-return: error
+  block-scoped-var: error
+  block-spacing: error
+  brace-style: error
+  camelcase: error
+  comma-dangle: ["error", "always-multiline"]
+  comma-style: error
+  complexity: error
+  curly: error
+  default-case: error
+  eol-last: error
+  eqeqeq: ["error", "smart"]
+  func-call-spacing: error
+  indent: ["error", 2]
+  max-len: error
+  no-caller: error
+  no-catch-shadow: error
+  no-lonely-if: error
+  no-loop-func: error
+  no-magic-numbers: error
+  no-multiple-empty-lines: error
+  no-param-reassign: error
+  no-redeclare: error
+  no-shadow: error
+  no-ternary: error
+  no-trailing-spaces: error
+  no-unneeded-ternary: error
+  no-unused-expressions: error
+  no-var: error
+  no-with: error
+  one-var: ["error", "never"]
+  prefer-const: error
+  prefer-rest-arguments: error
+  prefer-spread: error
+  prefer-template: error
+  quotes: error
+  semi: ["error", "never"]
+  space-before-blocks: error
+  vars-on-top: error
+  wrap-iife: error
+  yoda: error
