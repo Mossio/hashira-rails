@@ -198,14 +198,6 @@ PostgreSQL needs to be installed and running for the `db:create` rake task.
 If you have problems, please create a
 [GitHub Issue](https://github.com/mcmire/armadura/issues).
 
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md).
-
-Thank you, [contributors]!
-
-[contributors]: https://github.com/thoughtbot/armadura/graphs/contributors
-
 ## License
 
 Armadura is copyright © 2016 Elliot Winkler.
