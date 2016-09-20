@@ -1,0 +1,76 @@
+#!/bin/bash
+
+# Set up the application.
+# Run this script immediately after cloning the codebase.
+
+# Exit if any command fails
+set -e
+
+echo "=== Ensuring current Ruby version is installed ==="
+if [[ ! "$(ruby -v)" =~ "<%= Armadura::RUBY_VERSION %>" ]]; then
+  if which rbenv &>/dev/null; then
+    rbenv install <%= Armadura::RUBY_VERSION %>
+  else
+    echo "You don't have Ruby <%= Armadura::RUBY_VERSION %> installed."
+    echo "Use a Ruby version manager such as rbenv or RVM to install it,"
+    echo "  then re-run this script when you're done."
+    exit 1
+  fi
+fi
+
+echo "=== Ensuring Postgres is installed ==="
+if ! which pg_config &>/dev/null; then
+  brew install postgresql
+  brew services install postgresql
+fi
+
+echo "=== Ensuring Redis is installed ==="
+if ! which redis-cli &>/dev/null; then
+  brew install redis
+  brew services install redis
+fi
+
+echo "=== Ensuring Node is installed ==="
+if ! which node &>/dev/null; then
+  brew install nodejs
+fi
+
+echo "=== Ensuring Heroku is installed ==="
+if ! which heroku &>/dev/null; then
+  brew install heroku-toolbelt
+fi
+
+echo "=== Ensuring Bower is installed ==="
+if ! which bower &>/dev/null; then
+  npm install -g bower
+fi
+
+echo "=== Ensuring Rubocop is installed ==="
+if ! which rubocop &>/dev/null; then
+  gem install rubocop
+fi
+
+echo "=== Ensuring ESLint is installed ==="
+if ! which eslint &>/dev/null; then
+  npm install -g eslint
+fi
+
+echo "=== Installing Ruby dependencies ==="
+gem install bundler --conservative
+bundle check || bundle install
+
+echo "=== Installing JavaScript dependencies ==="
+bower install
+
+echo "=== Setting up database ==="
+bin/rake dev:prime
+
+echo "=== Adding binstubs to PATH ==="
+mkdir -p .git/safe
+
+if [[ -z "$CI" ]]; then
+  if [[ ! -f .env.local ]]; then
+    echo "=== Copying .env to .env.local ==="
+    cp .env .env.local
+  fi
+fi

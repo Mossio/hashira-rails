@@ -1,28 +1,82 @@
-# <%= app_name.humanize %>
+# <%= app_name.gsub("-", "_").titleize %>
 
-## Getting Started
+[YOU SHOULD FILL ME IN: What does this app do?]
 
-After you have cloned this repo, run this setup script to set up your machine
-with the necessary dependencies to run and test this app:
+## Quick links
 
-    % ./bin/setup
+* **Staging:** [FILL ME IN]
+* **Production:** [FILL ME IN]
+* **Trello:** [FILL ME IN]
+* **GitHub:** [FILL ME IN]
+* ...
 
-It assumes you have a machine equipped with Ruby, Postgres, etc. If not, set up
-your machine with [this script].
+## Architecture
 
-[this script]: https://github.com/thoughtbot/laptop
+* **Backend:** Ruby on Rails 4, PostgreSQL, Redis (for background jobs)
+* **Frontend:** ES2015 (transpiled using [Babel] to ES5)
 
-After setting up, you can run the application using [Heroku Local]:
+[Babel]: http://babeljs.io
 
-    % heroku local
+## Getting started
+
+After you've cloned this repo, run the following script to install backend and
+frontend dependencies and set up the database:
+
+    bin/setup
+
+This assumes that you have Ruby, PostgreSQL, and Redis installed on your
+computer. If you don't, then you'll be given the appropriate instructions to
+install these dependencies first.
+
+To run the app, use [Heroku Local]:
+
+    heroku local
 
 [Heroku Local]: https://devcenter.heroku.com/articles/heroku-local
 
-## Guidelines
+## Development workflow
 
-Use the following guides for getting things done, programming well, and
-programming in style.
+* The mainline branch is `master`.
+* Create a card for a feature or bugfix on Trello.
+* Cut feature or bugfix branches off of `master`.
+* Write tests.
+* Create pull requests on GitHub and get others to review your work.
+* Rebase and squash your commits if needed to prevent cluttering up the history
+  with needless commits.
+* Merge those branches into `master` using `--ff-only` to prevent merge commits
+  from being created.
+* Deploy changes to staging so that the client can try out those changes in a
+  live environment.
+* Move cards on Trello to the appropriate columns as you are working.
 
-* [Protocol](http://github.com/thoughtbot/guides/blob/master/protocol)
-* [Best Practices](http://github.com/thoughtbot/guides/blob/master/best-practices)
-* [Style](http://github.com/thoughtbot/guides/blob/master/style)
+## Testing
+
+[RSpec] is used to write tests for Ruby code.
+
+You can run the test suite for the project by saying:
+
+    bundle exec rake
+
+[RSpec]: http://rspec.info
+
+## Style
+
+Ruby and JavaScript code follows a consistent style, enforced by [Rubocop] and
+[ESLint]. Configure your editor to run code you write against these tools.
+Configuration is kept in [`.rubocop.yml`](.rubocop.yml) and
+[`.eslintrc.yml`](.eslintrc.yml).
+
+[Rubocop]: https://github.com/bbatsov/rubocop
+[ESLint]: http://eslint.org/
+
+## Deployment
+
+There are two versions of the app, staging and production, and they are hosted
+on [Heroku].
+
+To deploy staging, choose one of:
+
+    bin/deploy staging
+    bin/deploy production
+
+[Heroku]: http://heroku.com

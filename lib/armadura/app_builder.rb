@@ -93,7 +93,7 @@ module Armadura
     end
 
     def provide_setup_script
-      template "bin_setup", "bin/setup", force: true
+      template "bin_setup.erb", "bin/setup", force: true
       run "chmod a+x bin/setup"
     end
 
@@ -360,19 +360,6 @@ Rack::Timeout.timeout = (ENV["RACK_TIMEOUT"] || 10).to_i
 
     def create_deploy_script
       copy_file "bin_deploy", "bin/deploy"
-
-      instructions = <<-MARKDOWN
-
-## Deploying
-
-If you have previously run the `./bin/setup` script,
-you can deploy to staging and production with:
-
-    $ ./bin/deploy staging
-    $ ./bin/deploy production
-      MARKDOWN
-
-      append_file "README.md", instructions
       run "chmod a+x bin/deploy"
     end
 
