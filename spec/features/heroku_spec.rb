@@ -38,8 +38,8 @@ RSpec.describe "Heroku" do
 
       readme = IO.read("#{project_path}/README.md")
 
-      expect(readme).to include("./bin/deploy staging")
-      expect(readme).to include("./bin/deploy production")
+      expect(readme).to include("bin/deploy staging")
+      expect(readme).to include("bin/deploy production")
 
       circle_yml_path = "#{project_path}/circle.yml"
       circle_yml = IO.read(circle_yml_path)
