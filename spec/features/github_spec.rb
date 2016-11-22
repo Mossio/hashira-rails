@@ -1,16 +1,11 @@
 require "spec_helper"
 
-RSpec.describe "GitHub" do
-  before do
-    drop_dummy_database
-    remove_project_directory
+RSpec.describe "GitHub", type: :feature do
+  before(:all) do
+    generate_app("--github=test-repo")
   end
 
   it "suspends a project with --github option" do
-    repo_name = "test"
-    run_armadura("--github=#{repo_name}")
-    setup_app_dependencies
-
-    expect(FakeGithub).to have_created_repo(repo_name)
+    expect(FakeGithub).to have_created_repo("test-repo")
   end
 end

@@ -1,19 +1,15 @@
 require "spec_helper"
 
-RSpec.describe "Teaspoon" do
+RSpec.describe "Teaspoon", type: :feature do
   before(:all) do
-    drop_dummy_database
-    remove_project_directory
-    run_armadura
-    setup_app_dependencies
+    generate_app
   end
 
   it "adds the Teaspoon gem to the Gemfile" do
-    gemfile = IO.read("#{project_path}/Gemfile")
-    expect(gemfile).to include "teaspoon"
+    expect_app_to_list_gem("teaspoon")
   end
 
   it "creates spec/javascripts" do
-    expect(File.exist?("#{project_path}/spec/javascripts")).to be true
+    expect(directory_in_app("spec/javascripts")).to exist
   end
 end

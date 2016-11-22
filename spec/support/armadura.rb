@@ -1,83 +1,126 @@
 module ArmaduraTestHelpers
   APP_NAME = "dummy_app"
 
-  def remove_project_directory
-    FileUtils.rm_rf(project_path)
+  extend self
+
+  def remove_app_directory
+    FileUtils.rm_rf(app_directory)
   end
 
   def create_tmp_directory
-    FileUtils.mkdir_p(tmp_path)
+    tmp_directory.mkpath
   end
 
-  def run_armadura(arguments = nil)
-    arguments = "--path=#{root_path} #{arguments}"
-    Dir.chdir(tmp_path) do
-      Bundler.with_clean_env do
-        add_fakes_to_path
-        `
-          #{armadura_bin} #{APP_NAME} #{arguments}
-        `
-      end
+  def generate_app(*additional_args)
+    args = [
+      APP_NAME,
+      "--path=#{project_directory}",
+      "--force",
+      *additional_args
+    ]
+
+    FakeGithub.clear
+    FakeHeroku.clear
+    drop_app_database!
+    remove_app_directory
+    run_armadura_command!(*args)
+    install_app_dependencies!
+  end
+
+  def run_armadura_command!(*args)
+    run_command!(
+      armadura_executable_path.to_s,
+      *args,
+    )
+  end
+
+  def run_command_within_app(*args)
+    run_command(*args) do |runner|
+      runner.directory = app_directory
     end
   end
 
-  def armadura_help_command
-    Dir.chdir(tmp_path) do
-      Bundler.with_clean_env do
-        `
-          #{armadura_bin} -h
-        `
-      end
+  def run_command_within_app!(*args)
+    run_command!(*args) do |runner|
+      runner.directory = app_directory
     end
   end
 
-  def setup_app_dependencies
-    if File.exist?(project_path)
-      Dir.chdir(project_path) do
-        Bundler.with_clean_env do
-          `bundle check || bundle install`
-        end
-      end
-    end
+  def app_directory
+    tmp_directory.join(APP_NAME)
   end
 
-  def drop_dummy_database
-    if File.exist?(project_path)
-      Dir.chdir(project_path) do
-        Bundler.with_clean_env do
-          `rake db:drop`
-        end
-      end
-    end
+  def file_in_app(path)
+    app_directory.join(path)
   end
 
-  def add_fakes_to_path
-    ENV["PATH"] = "#{support_bin}:#{ENV['PATH']}"
-  end
+  alias_method :directory_in_app, :file_in_app
 
-  def project_path
-    @project_path ||= Pathname.new("#{tmp_path}/#{APP_NAME}")
-  end
-
-  def usage_file
-    @usage_path ||= File.join(root_path, "USAGE")
+  def expect_app_to_list_gem(gem_name, version: nil, **options)
+    gemfile = file_in_app("Gemfile")
+    formatted_options = options.
+      map { |key, value| "#{key}: #{value.inspect}" }.
+      join(", ")
+    pieces = [%(gem "#{gem_name}"), version, formatted_options].
+      select { |value| !value.nil? && !value.empty? }
+    pieces.join(", ")
   end
 
   private
 
-  def tmp_path
-    @tmp_path ||= Pathname.new("#{root_path}/tmp")
+  def install_app_dependencies!
+    if app_directory.exist?
+      if !run_command_within_app("bundle check").success?
+        run_command_within_app!("bundle install")
+      end
+    end
   end
 
-  def armadura_bin
-    File.join(root_path, 'exe', 'armadura')
+  def drop_app_database!
+    if app_directory.exist?
+      run_command_within_app!("bundle exec rake db:drop")
+    end
   end
 
-  def support_bin
-    File.join(root_path, "spec", "fakes", "bin")
+  def run_command(*args, &block)
+    build_command_runner(*args, &block).tap do |runner|
+      runner.call
+    end
   end
 
-  def root_path
-    File.expand_path('../../../', __FILE__)
+  def run_command!(*args, &block)
+    build_command_runner(*args, &block).tap do |runner|
+      runner.run_successfully = true
+      runner.call
+    end
+  end
+
+  def build_command_runner(*args)
+    Armadura::Test::CommandRunner.new(*args).tap do |runner|
+      runner.directory = tmp_directory
+      runner.env["PATH"] = "#{fake_executables_directory}:#{ENV["PATH"]}"
+
+      yield runner if block_given?
+
+      runner.around_command do |run_command|
+        Bundler.with_clean_env(&run_command)
+      end
+    end
+  end
+
+  def tmp_directory
+    project_directory.join("tmp")
+  end
+
+  def armadura_executable_path
+    project_directory.join("exe/armadura")
+  end
+
+  def fake_executables_directory
+    project_directory.join("spec/fakes/bin")
+  end
+
+  def project_directory
+    Armadura::Test.project_directory
   end
 end

@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
 
-require File.expand_path(File.join('..', '..', 'support', 'fake_github'), File.dirname(__FILE__))
+require_relative "../../support/fake_github"
 
-FakeGithub.new(ARGV).run!
+FakeGithub.run(ARGV)

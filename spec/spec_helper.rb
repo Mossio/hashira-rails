@@ -1,20 +1,16 @@
 require 'bundler/setup'
 
-Bundler.require(:default, :test)
+Bundler.require(:default, :development)
 
 require (Pathname.new(__FILE__).dirname + '../lib/armadura').expand_path
+
+module Armadura
+  module Test; end
+end
 
 Dir['./spec/support/**/*.rb'].each { |file| require file }
 
 RSpec.configure do |config|
   config.include ArmaduraTestHelpers
-
-  config.before(:all) do
-    add_fakes_to_path
-    create_tmp_directory
-  end
-
-  config.before(:each) do
-    FakeGithub.clear!
-  end
+  config.include Armadura::Test::Matchers
 end

@@ -305,7 +305,7 @@ Rack::Timeout.timeout = (ENV["RACK_TIMEOUT"] || 10).to_i
     end
 
     def configure_simple_form
-      bundle_command "exec rails generate simple_form:install"
+      generate "simple_form:install"
     end
 
     def configure_action_mailer
@@ -461,12 +461,12 @@ end
     end
 
     def add_bower
-      run "bin/rails g bower:install"
+      generate "bower:install"
       template "bower.json.erb", "bower.json", force: true
     end
 
     def add_teaspoon
-      run "bin/rails g teaspoon:install"
+      generate "teaspoon:install"
     end
 
     private

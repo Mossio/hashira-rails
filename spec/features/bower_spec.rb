@@ -1,23 +1,19 @@
 require "spec_helper"
 
-RSpec.describe "Bower" do
+RSpec.describe "Bower", type: :feature do
   before(:all) do
-    drop_dummy_database
-    remove_project_directory
-    run_armadura
-    setup_app_dependencies
+    generate_app
   end
 
   it "adds the Bower gem to the Gemfile" do
-    gemfile = IO.read("#{project_path}/Gemfile")
-    expect(gemfile).to include "bower"
+    expect_app_to_list_gem("bower")
   end
 
   it "adds a bower.json file to the project" do
-    expect(File.exist?("#{project_path}/bower.json")).to be true
+    expect(file_in_app("bower.json")).to exist
   end
 
   it "adds a .bowerrc file to the project" do
-    expect(File.exist?("#{project_path}/.bowerrc")).to be true
+    expect(file_in_app(".bowerrc")).to exist
   end
 end

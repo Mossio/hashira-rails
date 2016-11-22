@@ -1,75 +1,81 @@
 require "spec_helper"
 
-RSpec.describe "Heroku" do
+RSpec.describe "Heroku", type: :feature do
   context "--heroku" do
     before(:all) do
-      clean_up
-      run_armadura("--heroku=true")
-      setup_app_dependencies
+      generate_app("--heroku=true")
     end
 
     it "suspends a project for Heroku" do
-      app_name = ArmaduraTestHelpers::APP_NAME.dasherize
+      expect(FakeHeroku).
+        to have_created_app(app_name, environment: "staging")
+      expect(FakeHeroku).
+        to have_created_app(app_name, environment: "production")
+      expect(FakeHeroku).
+        to have_configured_variable("SECRET_KEY_BASE", remote: "staging")
+      expect(FakeHeroku).
+        to have_configured_variable("SECRET_KEY_BASE", remote: "production")
+      expect(FakeHeroku).
+        to have_configured_variable("APPLICATION_HOST", remote: "staging")
+      expect(FakeHeroku).
+        to have_configured_variable("APPLICATION_HOST", remote: "production")
+      expect(FakeHeroku).to have_set_up_pipeline_for(app_name)
 
-      expect(FakeHeroku).to have_created_app_for("staging")
-      expect(FakeHeroku).to have_created_app_for("production")
-      expect(FakeHeroku).to have_configured_vars("staging", "SECRET_KEY_BASE")
-      expect(FakeHeroku).to have_configured_vars(
-        "production",
-        "SECRET_KEY_BASE",
-      )
-      expect(FakeHeroku).to have_configured_vars(
-        "staging",
-        "APPLICATION_HOST",
-      )
-      expect(FakeHeroku).to have_configured_vars(
-        "production",
-        "APPLICATION_HOST",
-      )
-      expect(FakeHeroku).to have_setup_pipeline_for(app_name)
+      setup_script = file_in_app("bin/setup")
 
-      bin_setup_path = "#{project_path}/bin/setup"
-      bin_setup = IO.read(bin_setup_path)
+      expect(setup_script).
+        to contain_text("heroku join --app #{app_name}-production")
+      expect(setup_script).
+        to contain_text("heroku join --app #{app_name}-staging")
+      expect(setup_script).
+        to contain_line("git config heroku.remote staging")
+      expect(setup_script).to be_executable
 
-      expect(bin_setup).to include("heroku join --app #{app_name}-production")
-      expect(bin_setup).to include("heroku join --app #{app_name}-staging")
-      expect(bin_setup).to include("git config heroku.remote staging")
-      expect(File.stat(bin_setup_path)).to be_executable
+      expect(readme).to contain_line("bin/deploy staging")
+      expect(readme).to contain_line("bin/deploy production")
 
-      readme = IO.read("#{project_path}/README.md")
-
-      expect(readme).to include("bin/deploy staging")
-      expect(readme).to include("bin/deploy production")
-
-      circle_yml_path = "#{project_path}/circle.yml"
-      circle_yml = IO.read(circle_yml_path)
-
-      expect(circle_yml).to include <<-YML.strip_heredoc
-      deployment:
-        staging:
-          branch: master
-          commands:
-            - bin/deploy staging
+      expect(circleci_configuration_file).to contain_text(<<-YML.strip_heredoc)
+        deployment:
+          staging:
+            branch: master
+            commands:
+              - bin/deploy staging
       YML
+    end
+
+    def setup_script
+      file_in_app("bin/setup")
+    end
+
+    def readme
+      file_in_app("README.md")
+    end
+
+    def circleci_configuration_file
+      file_in_app("circle.yml")
     end
   end
 
   context "--heroku with region flag" do
     before(:all) do
-      clean_up
-      run_armadura(%{--heroku=true --heroku-flags="--region eu"})
-      setup_app_dependencies
+      generate_app(%(--heroku=true --heroku-flags="--region eu"))
     end
 
     it "suspends a project with extra Heroku flags" do
-      expect(FakeHeroku).to have_created_app_for("staging", "--region eu")
-      expect(FakeHeroku).to have_created_app_for("production", "--region eu")
+      expect(FakeHeroku).to have_created_app(
+        app_name,
+        environment: "staging",
+        flags: "--region eu",
+      )
+      expect(FakeHeroku).to have_created_app(
+        app_name,
+        environment: "production",
+        flags: "--region eu",
+      )
     end
   end
 
-  def clean_up
-    drop_dummy_database
-    remove_project_directory
-    FakeHeroku.clear!
+  def app_name
+    ArmaduraTestHelpers::APP_NAME.dasherize
   end
 end
