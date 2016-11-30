@@ -5,7 +5,7 @@ require 'date'
 
 Gem::Specification.new do |s|
   s.required_ruby_version = ">= #{Armadura::RUBY_VERSION}"
-  s.authors = ['Elliot Winkler <elliot.winkler@gmail.com>']
+  s.authors = ['Elliot Winkler (elliot.winkler@gmail.com)']
   s.date = Date.today.strftime('%Y-%m-%d')
   s.description = "Armadura generates Rails projects, preconfigured with sensible defaults."
   s.summary = "Armadura generates Rails projects, preconfigured with sensible defaults."
