@@ -4,5 +4,5 @@ module Armadura
     read("#{File.dirname(__FILE__)}/../../.ruby-version").
     strip.
     freeze
-  VERSION = "0.1.1".freeze
+  VERSION = "0.1.2".freeze
 end
