@@ -1,6 +1,6 @@
 require "spec_helper"
 
-RSpec.describe "Suspend a new project with default configuration", type: :feature do
+RSpec.describe "Generating a new project with default configuration", type: :feature do
   before(:all) do
     generate_app
   end
@@ -256,6 +256,42 @@ RSpec.describe "Suspend a new project with default configuration", type: :featur
 
   it "removes the test directory" do
     expect(directory_in_app("test")).not_to exist
+  end
+
+  it "adds the Bower gem to the Gemfile" do
+    expect_app_to_list_gem("bower")
+  end
+
+  it "adds a bower.json file to the project" do
+    expect(file_in_app("bower.json")).to exist
+  end
+
+  it "adds a .bowerrc file to the project" do
+    expect(file_in_app(".bowerrc")).to exist
+  end
+
+  it "adds Sidekiq to the Gemfile" do
+    expect_app_to_list_gem("sidekiq")
+  end
+
+  it "creates a config/sidekiq.yml file configured with the default and mailers queues" do
+    sidekiq_config_file = file_in_app("config/sidekiq.yml")
+    expect(sidekiq_config_file).to exist
+    expect(sidekiq_config_file).to contain_line("- default")
+    expect(sidekiq_config_file).to contain_line("- mailers")
+  end
+
+  it "configures ActiveJob to use Sidekiq" do
+    expect(file_in_app("config/application.rb")).
+      to contain_line("config.active_job.queue_adapter = :sidekiq")
+  end
+
+  it "adds the Teaspoon gem to the Gemfile" do
+    expect_app_to_list_gem("teaspoon")
+  end
+
+  it "creates spec/javascripts" do
+    expect(directory_in_app("spec/javascripts")).to exist
   end
 
   def app_name
