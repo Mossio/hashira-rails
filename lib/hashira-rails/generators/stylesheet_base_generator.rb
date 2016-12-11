@@ -1,6 +1,6 @@
 require "rails/generators"
 
-module Armadura
+module HashiraRails
   class StylesheetBaseGenerator < Rails::Generators::Base
     source_root File.expand_path(
       File.join("..", "..", "..", "templates"),

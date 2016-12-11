@@ -1,4 +1,4 @@
-module Armadura
+module HashiraRails
   module Adapters
     class Heroku
       def initialize(app_builder)

@@ -1,7 +1,7 @@
 require 'rails/generators'
 require 'rails/generators/rails/app/app_generator'
 
-module Armadura
+module HashiraRails
   class AppGenerator < Rails::Generators::AppGenerator
     hide!
 
@@ -17,27 +17,27 @@ module Armadura
     class_option :github, type: :string, default: nil,
       desc: "Create Github repository and add remote origin pointed to repo"
 
-    class_option :version, type: :boolean, aliases: "-v", group: :armadura,
-      desc: "Show Armadura version number and quit"
+    class_option :version, type: :boolean, aliases: "-v", group: :hashira,
+      desc: "Show HashiraRails version number and quit"
 
-    class_option :help, type: :boolean, aliases: '-h', group: :armadura,
+    class_option :help, type: :boolean, aliases: '-h', group: :hashira,
       desc: "Show this help message and quit"
 
     class_option :path, type: :string, default: nil,
       desc: "Path to the gem"
 
     def finish_template
-      invoke :armadura_customization
+      invoke :hashira_customization
       super
     end
 
-    def armadura_customization
+    def hashira_customization
       invoke :customize_gemfile
       invoke :setup_development_environment
       invoke :setup_test_environment
       invoke :setup_production_environment
       invoke :setup_secret_token
-      invoke :create_armadura_views
+      invoke :create_hashira_views
       invoke :configure_app
       invoke :copy_miscellaneous_files
       invoke :customize_error_pages
@@ -119,8 +119,8 @@ module Armadura
       build :setup_secret_token
     end
 
-    def create_armadura_views
-      say 'Creating armadura views'
+    def create_hashira_views
+      say 'Creating hashira views'
       build :create_partials_directory
       build :create_shared_flashes
       build :create_shared_javascripts
@@ -223,8 +223,8 @@ module Armadura
 
     def generate_default
       run("spring stop")
-      generate("armadura:static")
-      generate("armadura:stylesheet_base")
+      generate("hashira:static")
+      generate("hashira:stylesheet_base")
     end
 
     def outro
@@ -232,13 +232,13 @@ module Armadura
     end
 
     def self.banner
-      "armadura #{arguments.map(&:usage).join(' ')} [options]"
+      "hashira-rails #{arguments.map(&:usage).join(' ')} [options]"
     end
 
     protected
 
     def get_builder_class
-      Armadura::AppBuilder
+      HashiraRails::AppBuilder
     end
 
     def using_active_record?

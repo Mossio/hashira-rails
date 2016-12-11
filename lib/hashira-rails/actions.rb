@@ -1,4 +1,4 @@
-module Armadura
+module HashiraRails
   module Actions
     def replace_in_file(relative_path, find, replace)
       path = File.join(destination_root, relative_path)

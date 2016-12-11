@@ -1,8 +1,8 @@
 require "forwardable"
 
-module Armadura
+module HashiraRails
   class AppBuilder < Rails::AppBuilder
-    include Armadura::Actions
+    include HashiraRails::Actions
     extend Forwardable
 
     def_delegators :heroku_adapter,
@@ -20,7 +20,7 @@ module Armadura
     end
 
     def gitignore
-      copy_file "armadura_gitignore", ".gitignore"
+      copy_file "hashira_gitignore", ".gitignore"
     end
 
     def gemfile
@@ -215,7 +215,7 @@ config.public_file_server.headers = {
     end
 
     def create_application_layout
-      template 'armadura_layout.html.erb.erb',
+      template 'hashira_layout.html.erb.erb',
         'app/views/layouts/application.html.erb',
         force: true
     end
@@ -232,7 +232,7 @@ config.public_file_server.headers = {
     def replace_gemfile(path)
       template 'Gemfile.erb', 'Gemfile', force: true do |content|
         if path
-          content.gsub(%r{gem .armadura.}) { |s| %{#{s}, path: "#{path}"} }
+          content.gsub(%r{gem .hashira-rails.}) { |s| %{#{s}, path: "#{path}"} }
         else
           content
         end
@@ -240,7 +240,7 @@ config.public_file_server.headers = {
     end
 
     def set_ruby_to_version_being_used
-      create_file '.ruby-version', "#{Armadura::RUBY_VERSION}\n"
+      create_file '.ruby-version', "#{HashiraRails::RUBY_VERSION}\n"
     end
 
     def enable_database_cleaner

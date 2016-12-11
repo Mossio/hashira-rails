@@ -1,6 +1,6 @@
 require "rails/generators"
 
-module Armadura
+module HashiraRails
   class StaticGenerator < Rails::Generators::Base
     def add_high_voltage
       gem "high_voltage"

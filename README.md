@@ -1,17 +1,17 @@
-# Armadura [![Build Status](https://secure.travis-ci.org/mcmire/armadura.svg?branch=master)](http://travis-ci.org/mcmire/armadura)
+# hashira-rails [![Build Status](https://secure.travis-ci.org/mcmire/hashira-rails.svg?branch=master)](http://travis-ci.org/mcmire/hashira-rails)
 
-Armadura is a gem that lets you generate a Rails application, preconfigured with
-sensible defaults.
+Hashira (柱) generates apps, preconfigured with sensible defaults. This project
+generates Rails apps.
 
 ## Installation
 
-First install the armadura gem:
+First install the hashira-rails gem:
 
-    gem install armadura
+    gem install hashira-rails
 
 Then run:
 
-    armadura projectname
+    hashira-rails projectname
 
 This will create a Rails app in `projectname` using the latest version of Rails.
 
@@ -23,9 +23,9 @@ This will create a Rails app in `projectname` using the latest version of Rails.
 
 ## Gemfile
 
-To see the latest and greatest gems, look at Armadura's
+To see the latest and greatest gems, look at Hashira's
 [Gemfile](templates/Gemfile.erb), which will be appended to the default
-generated projectname/Gemfile.
+generated Gemfile for your app.
 
 It includes application gems like:
 
@@ -89,7 +89,7 @@ And testing gems like:
 
 ## Other goodies
 
-Armadura also comes with:
+Your generated Rails app also comes with:
 
 * The [`./bin/setup`][setup] convention for new developer setup
 * The `./bin/deploy` convention for deploying to Heroku
@@ -119,7 +119,7 @@ Armadura also comes with:
 
 You can optionally create Heroku staging and production apps:
 
-    armadura app --heroku true
+    hashira-rails app --heroku true
 
 This:
 
@@ -138,7 +138,7 @@ This:
 
 You can optionally specify alternate Heroku flags:
 
-    armadura app \
+    hashira-rails app \
       --heroku true \
       --heroku-flags "--region eu --addons sendgrid,ssl"
 
@@ -151,15 +151,15 @@ See all possible Heroku flags:
 This will initialize a new git repository for your Rails app. You can
 bypass this with the `--skip-git` option:
 
-    armadura app --skip-git true
+    hashira-rails app --skip-git true
 
 ## GitHub
 
-You can optionally create a GitHub repository for the suspended Rails app. It
+You can optionally create a GitHub repository for the generated Rails app. It
 requires that you have [Hub](https://github.com/github/hub) on your system:
 
     curl http://hub.github.com/standalone -sLo ~/bin/hub && chmod +x ~/bin/hub
-    armadura app --github organization/project
+    hashira-rails app --github organization/project
 
 This has the same effect as running:
 
@@ -167,7 +167,7 @@ This has the same effect as running:
 
 ## Spring
 
-Armadura uses [spring](https://github.com/rails/spring) by default.
+Hashira uses [spring](https://github.com/rails/spring) by default.
 It makes Rails applications load faster, but it might introduce confusing issues
 around stale code not being refreshed.
 If you think your application is running old code, run `spring stop`.
@@ -175,10 +175,10 @@ And if you'd rather not use spring, add `DISABLE_SPRING=1` to your login file.
 
 ## Dependencies
 
-Armadura requires the latest version of Ruby.
+Hashira requires the latest version of Ruby.
 
-Some gems included in Armadura have native extensions. You should have GCC
-installed on your machine before generating an app with Armadura.
+Some gems included in Hashira have native extensions. You should have GCC
+installed on your machine before generating an app with Hashira.
 
 Use [OS X GCC Installer](https://github.com/kennethreitz/osx-gcc-installer/) for
 Snow Leopard (OS X 10.6).
@@ -196,11 +196,11 @@ PostgreSQL needs to be installed and running for the `db:create` rake task.
 ## Issues
 
 If you have problems, please create a
-[GitHub Issue](https://github.com/mcmire/armadura/issues).
+[GitHub Issue](https://github.com/mcmire/hashira-rails/issues).
 
 ## License
 
-Armadura is copyright © 2016 Elliot Winkler.
+Hashira is copyright © 2016 Elliot Winkler.
 It is adapted from [Suspenders], a [thoughtbot] project.
 It is free software, and may be redistributed under the terms specified in the
 [LICENSE] file.
