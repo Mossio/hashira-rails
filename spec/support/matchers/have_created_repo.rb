@@ -1,4 +1,4 @@
-module Armadura::Test
+module Hashira::Test
   module Matchers
     def have_created_repo(repo_name)
       HaveCreatedRepoMatcher.new(repo_name)

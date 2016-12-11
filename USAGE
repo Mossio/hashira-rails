@@ -1,9 +1,9 @@
 Description:
-    Armadura is a gem that lets you generate a Rails application, preconfigured
-    with sensible defaults.
+    hashira-rails generates Rails applications, preconfigured with sensible
+    defaults.
 
 Example usage:
     # Instead of saying:
     rails new weblog
     # say:
-    armadura weblog
+    hashira-rails weblog

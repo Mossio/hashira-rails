@@ -7,11 +7,11 @@
 set -e
 
 echo "=== Ensuring current Ruby version is installed ==="
-if [[ ! "$(ruby -v)" =~ "<%= Armadura::RUBY_VERSION %>" ]]; then
+if [[ ! "$(ruby -v)" =~ "<%= Hashira::Rails::RUBY_VERSION %>" ]]; then
   if which rbenv &>/dev/null; then
-    rbenv install <%= Armadura::RUBY_VERSION %>
+    rbenv install <%= Hashira::Rails::RUBY_VERSION %>
   else
-    echo "You don't have Ruby <%= Armadura::RUBY_VERSION %> installed."
+    echo "You don't have Ruby <%= Hashira::Rails::RUBY_VERSION %> installed."
     echo "Use a Ruby version manager such as rbenv or RVM to install it,"
     echo "  then re-run this script when you're done."
     exit 1

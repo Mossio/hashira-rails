@@ -1,4 +1,4 @@
-module Armadura::Test
+module Hashira::Test
   module Matchers
     def have_created_app(app_name, environment:, flags: "")
       HaveCreatedAppMatcher.new(app_name, environment, flags: flags)

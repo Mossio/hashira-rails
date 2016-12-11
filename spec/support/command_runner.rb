@@ -4,7 +4,7 @@ require "timeout"
 
 require_relative "helpers/terminal_output_helpers"
 
-module Armadura::Test
+module Hashira::Test
   class CommandRunner
     TimeoutError = Class.new(StandardError)
     CommandFailedError = Class.new(StandardError)

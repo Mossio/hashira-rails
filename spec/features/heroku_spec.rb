@@ -76,6 +76,6 @@ RSpec.describe "Heroku", type: :feature do
   end
 
   def app_name
-    ArmaduraTestHelpers::APP_NAME.dasherize
+    HashiraTestHelpers::APP_NAME.dasherize
   end
 end

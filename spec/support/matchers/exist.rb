@@ -1,4 +1,4 @@
-module Armadura::Test
+module Hashira::Test
   module Matchers
     def exist
       ExistMatcher.new
@@ -20,8 +20,10 @@ module Armadura::Test
 
       private
 
+      attr_reader :pathname
+
       def simplified_file_path
-        pathname.sub(Armadura::Test.project_directory.to_s, "~").to_s
+        pathname.sub(Hashira::Test.project_directory.to_s, "~").to_s
       end
     end
   end

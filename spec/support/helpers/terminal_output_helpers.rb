@@ -1,4 +1,4 @@
-module Armadura::Test
+module Hashira::Test
   module TerminalOutputHelpers
     def divider(title = '')
       total_length = 72

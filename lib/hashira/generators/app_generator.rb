@@ -1,8 +1,8 @@
 require 'rails/generators'
 require 'rails/generators/rails/app/app_generator'
 
-module HashiraRails
-  class AppGenerator < Rails::Generators::AppGenerator
+module Hashira
+  class AppGenerator < ::Rails::Generators::AppGenerator
     hide!
 
     class_option :database, type: :string, aliases: "-d", default: "postgresql",
@@ -18,7 +18,7 @@ module HashiraRails
       desc: "Create Github repository and add remote origin pointed to repo"
 
     class_option :version, type: :boolean, aliases: "-v", group: :hashira,
-      desc: "Show HashiraRails version number and quit"
+      desc: "Show hashira-rails version number and quit"
 
     class_option :help, type: :boolean, aliases: '-h', group: :hashira,
       desc: "Show this help message and quit"
@@ -238,7 +238,7 @@ module HashiraRails
     protected
 
     def get_builder_class
-      HashiraRails::AppBuilder
+      Hashira::Rails::AppBuilder
     end
 
     def using_active_record?

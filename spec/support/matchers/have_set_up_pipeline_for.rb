@@ -1,4 +1,4 @@
-module Armadura::Test
+module Hashira::Test
   module Matchers
     def have_set_up_pipeline_for(app_name)
       HaveSetUpPipelineForMatcher.new(app_name)

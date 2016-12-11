@@ -6,9 +6,9 @@ RSpec.describe "Suspend a new project with default configuration", type: :featur
   end
 
   it "uses custom Gemfile" do
-    expect(gemfile).to contain_line %(ruby "#{Armadura::RUBY_VERSION}")
+    expect(gemfile).to contain_line %(ruby "#{Hashira::Rails::RUBY_VERSION}")
     expect_app_to_list_gem("autoprefixer-rails")
-    expect_app_to_list_gem("rails", version: Armadura::RAILS_VERSION)
+    expect_app_to_list_gem("rails", version: Hashira::Rails::RAILS_VERSION)
   end
 
   it "ensures project specs pass" do
@@ -16,9 +16,9 @@ RSpec.describe "Suspend a new project with default configuration", type: :featur
       to have_output("0 failures")
   end
 
-  it "creates .ruby-version from Armadura .ruby-version" do
+  it "creates .ruby-version from Hashira .ruby-version" do
     expect(file_in_app(".ruby-version")).
-      to contain_text("#{Armadura::RUBY_VERSION}\n", match: :exact)
+      to contain_text("#{Hashira::Rails::RUBY_VERSION}\n", match: :exact)
   end
 
   it "copies dotfiles" do
@@ -259,7 +259,7 @@ RSpec.describe "Suspend a new project with default configuration", type: :featur
   end
 
   def app_name
-    ArmaduraTestHelpers::APP_NAME
+    HashiraTestHelpers::APP_NAME
   end
 
   def gemfile

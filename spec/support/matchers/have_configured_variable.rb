@@ -1,4 +1,4 @@
-module Armadura::Test
+module Hashira::Test
   module Matchers
     def have_configured_variable(variable_name, remote:)
       HaveConfiguredVariableMatcher.new(variable_name, remote)

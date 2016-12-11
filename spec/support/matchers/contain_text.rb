@@ -1,4 +1,4 @@
-module Armadura::Test
+module Hashira::Test
   module Matchers
     def contain_text(content, match: :all)
       ContainText.new(content, match)
@@ -9,7 +9,7 @@ module Armadura::Test
     end
 
     class ContainText
-      include Armadura::Test::TerminalOutputHelpers
+      include Hashira::Test::TerminalOutputHelpers
 
       def initialize(expected_content, matching_strategy)
         @expected_content = expected_content
@@ -73,7 +73,7 @@ module Armadura::Test
       end
 
       def simplified_file_path
-        pathname.sub(Armadura::Test.project_directory.to_s, "~").to_s
+        pathname.sub(Hashira::Test.project_directory.to_s, "~").to_s
       end
 
       def actual_stripped_lines

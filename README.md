@@ -23,7 +23,7 @@ This will create a Rails app in `projectname` using the latest version of Rails.
 
 ## Gemfile
 
-To see the latest and greatest gems, look at Hashira's
+To see the latest and greatest gems, look at the
 [Gemfile](templates/Gemfile.erb), which will be appended to the default
 generated Gemfile for your app.
 
@@ -167,18 +167,18 @@ This has the same effect as running:
 
 ## Spring
 
-Hashira uses [spring](https://github.com/rails/spring) by default.
-It makes Rails applications load faster, but it might introduce confusing issues
-around stale code not being refreshed.
-If you think your application is running old code, run `spring stop`.
-And if you'd rather not use spring, add `DISABLE_SPRING=1` to your login file.
+Your Rails app will be generated with [Spring](https://github.com/rails/spring)
+by default. It makes Rails applications load faster, but it might introduce
+confusing issues around stale code not being refreshed. If you think your
+application is running old code, run `spring stop`. And if you'd rather not use
+spring, add `DISABLE_SPRING=1` to your login file.
 
 ## Dependencies
 
-Hashira requires the latest version of Ruby.
+In order to use this gem, you must have the latest version of Ruby.
 
-Some gems included in Hashira have native extensions. You should have GCC
-installed on your machine before generating an app with Hashira.
+Some gems included in your app will have native extensions. You should have GCC
+installed on your machine before generating an app.
 
 Use [OS X GCC Installer](https://github.com/kennethreitz/osx-gcc-installer/) for
 Snow Leopard (OS X 10.6).
@@ -200,7 +200,7 @@ If you have problems, please create a
 
 ## License
 
-Hashira is copyright © 2016 Elliot Winkler.
+hashira-rails is copyright © 2016 Elliot Winkler.
 It is adapted from [Suspenders], a [thoughtbot] project.
 It is free software, and may be redistributed under the terms specified in the
 [LICENSE] file.

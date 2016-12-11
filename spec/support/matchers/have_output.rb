@@ -1,4 +1,4 @@
-module Armadura::Test
+module Hashira::Test
   module Matchers
     def have_output(output)
       HaveOutputMatcher.new(output)

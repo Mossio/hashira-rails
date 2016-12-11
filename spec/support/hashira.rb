@@ -1,4 +1,4 @@
-module ArmaduraTestHelpers
+module HashiraTestHelpers
   APP_NAME = "dummy_app"
 
   extend self
@@ -23,13 +23,13 @@ module ArmaduraTestHelpers
     FakeHeroku.clear
     drop_app_database!
     remove_app_directory
-    run_armadura_command!(*args)
+    run_hashira_rails_command!(*args)
     install_app_dependencies!
   end
 
-  def run_armadura_command!(*args)
+  def run_hashira_rails_command!(*args)
     run_command!(
-      armadura_executable_path.to_s,
+      hashira_rails_executable_path.to_s,
       *args,
     )
   end
@@ -96,7 +96,7 @@ module ArmaduraTestHelpers
   end
 
   def build_command_runner(*args)
-    Armadura::Test::CommandRunner.new(*args).tap do |runner|
+    Hashira::Test::CommandRunner.new(*args).tap do |runner|
       runner.directory = tmp_directory
       runner.env["PATH"] = "#{fake_executables_directory}:#{ENV["PATH"]}"
 
@@ -112,8 +112,8 @@ module ArmaduraTestHelpers
     project_directory.join("tmp")
   end
 
-  def armadura_executable_path
-    project_directory.join("exe/armadura")
+  def hashira_rails_executable_path
+    project_directory.join("exe/hashira-rails")
   end
 
   def fake_executables_directory
@@ -121,6 +121,6 @@ module ArmaduraTestHelpers
   end
 
   def project_directory
-    Armadura::Test.project_directory
+    Hashira::Test.project_directory
   end
 end
