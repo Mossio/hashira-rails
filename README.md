@@ -1,110 +1,217 @@
-# hashira-rails [![Build Status](https://secure.travis-ci.org/mcmire/hashira-rails.svg?branch=master)](http://travis-ci.org/mcmire/hashira-rails)
+# hashira-rails [![Build Status][]][Travis]
 
-Hashira (柱) generates apps, preconfigured with sensible defaults. This project
-generates Rails apps.
+[Build Status]: https://secure.travis-ci.org/Mossio/hashira-rails.svg?branch=master
+[Travis]: http://travis-ci.org/Mossio/hashira-rails
 
-## Installation
+Hashira (柱) generates apps which are preconfigured with gems and settings that
+we find useful at [Mossio]. This project generates Rails apps in particular.
 
-First install the hashira-rails gem:
+[Mossio]: http://mossio.co
+
+## Usage
+
+### Dependencies
+
+In order to use this gem, you must have the latest version of Ruby (2.3.3 as of
+this writing).
+
+Some gems included in your app will have native extensions. You should have a
+compiler installed and set up on your machine before generating an app. These
+days, Xcode supplies one with their Command Line Tools. You can easily install
+them by running `xcode-select --install`.
+
+### Generating a new app
+
+First you'll need to install the gem:
 
     gem install hashira-rails
 
-Then run:
+Then, from any directory, run:
 
     hashira-rails projectname
 
-This will create a Rails app in `projectname` using the latest version of Rails.
+Your generated Rails app will be available under a `projectname` directory.
 
-### Associated services
+When we make new apps we will typically follow through by setting up some
+associated services:
 
-* Enable [Circle CI](https://circleci.com/) Continuous Integration
-* Enable [GitHub auto deploys to Heroku staging and review
-    apps](https://dashboard.heroku.com/apps/app-name-staging/deploy/github).
+* We will set up [CircleCI] so that our tests are run on each push to a branch
+* We will set up Heroku so that it [automatically deploys staging] when master
+  is updated
 
-## Gemfile
+[CircleCI]: https://circleci.com/
+[automatically deploys staging]: https://devcenter.heroku.com/articles/github-integration#automatic-deploys
 
-To see the latest and greatest gems, look at the
-[Gemfile](templates/Gemfile.erb), which will be appended to the default
-generated Gemfile for your app.
+### Heroku
 
-It includes application gems like:
+By default, the generator will assume that you plan on deploying your app to
+Heroku. During the process, then, it will:
 
-* [Autoprefixer Rails](https://github.com/ai/autoprefixer-rails) for CSS vendor prefixes
-* [Bourbon](https://github.com/thoughtbot/bourbon) for Sass mixins
-* [Bitters](https://github.com/thoughtbot/bitters) for scaffold application styles
-* [Sidekiq](https://github.com/mperham/sidekiq) for background
-  processing
-* [Flutie](https://github.com/thoughtbot/flutie) for `page_title` and `body_class` view
-  helpers
-* [High Voltage](https://github.com/thoughtbot/high_voltage) for static pages
-* [jQuery Rails](https://github.com/rails/jquery-rails) for jQuery
-* [Neat](https://github.com/thoughtbot/neat) for semantic grids
-* [Normalize](https://necolas.github.io/normalize.css/) for resetting browser styles
-* [Postgres](https://github.com/ged/ruby-pg) for access to the Postgres database
-* [Rack Canonical Host](https://github.com/tylerhunt/rack-canonical-host) to
-  ensure all requests are served from the same domain
-* [Rack Timeout](https://github.com/heroku/rack-timeout) to abort requests that are
-  taking too long
-* [Recipient Interceptor](https://github.com/croaky/recipient_interceptor) to
-  avoid accidentally sending emails to real people from staging
-* [Refills](https://github.com/thoughtbot/refills) for “copy-paste” components
-  and patterns based on Bourbon, Neat and Bitters
-* [Sentry](https://sentry.io) for exception notification
-* [Simple Form](https://github.com/plataformatec/simple_form) for form markup
-  and style
-* [Skylight](https://www.skylight.io/) for monitoring performance
-* [Title](https://github.com/calebthompson/title) for storing titles in
-  translations
-* [Puma](https://github.com/puma/puma) to serve HTTP requests
+* Create a staging and production Heroku app
+* Create `staging` and `production` Git remotes pointing to those apps
+* Configure staging with `RACK_ENV` environment variable set to `production`
+* Add the [rails_stdout_logging] gem to configure the app to log to standard
+  out, which is how [Heroku's logging] works.
+* Create a [pipeline] on Heroku for review apps
 
-And development gems like:
+[rails_stdout_logging]: https://github.com/heroku/rails_stdout_logging
+[Heroku's logging]: https://devcenter.heroku.com/articles/logging#writing-to-your-log
+[pipeline]: https://devcenter.heroku.com/articles/pipelines
 
-* [Dotenv](https://github.com/bkeepers/dotenv) for loading environment variables
-* [Pry Rails](https://github.com/rweng/pry-rails) for interactively exploring
-  objects
-* [ByeBug](https://github.com/deivid-rodriguez/byebug) for interactively
-  debugging behavior
-* [Bullet](https://github.com/flyerhzm/bullet) for help to kill N+1 queries and
-  unused eager loading
-* [Bundler Audit](https://github.com/rubysec/bundler-audit) for scanning the
-  Gemfile for insecure dependencies based on published CVEs
-* [Spring](https://github.com/rails/spring) for fast Rails actions via
-  pre-loading
-* [Web Console](https://github.com/rails/web-console) for better debugging via
-  in-browser IRB consoles.
+The generator makes use of the `heroku` executable to create and configure apps.
+If there are any command-line options for `heroku` you wish to provide you can
+easily do that. For instance:
 
-And testing gems like:
+    hashira-rails app --heroku-flags "--region eu --addons sendgrid,ssl"
 
-* [Capybara](https://github.com/jnicklas/capybara) and
-  [Capybara WebKit](https://github.com/thoughtbot/capybara-webkit) for
-  integration testing
-* [Factory Girl](https://github.com/thoughtbot/factory_girl) for test data
-* [Formulaic](https://github.com/thoughtbot/formulaic) for integration testing
-  HTML forms
-* [RSpec](https://github.com/rspec/rspec) for unit testing
-* [RSpec Mocks](https://github.com/rspec/rspec-mocks) for stubbing and spying
-* [Shoulda Matchers](https://github.com/thoughtbot/shoulda-matchers) for common
-  RSpec matchers
-* [Timecop](https://github.com/ferndopolis/timecop-console) for testing time
+You can see all possible options with:
 
-## Other goodies
+    heroku help create
 
-Your generated Rails app also comes with:
+If you don't care about Heroku and want to disable the behavior described above,
+you can say:
 
-* The [`./bin/setup`][setup] convention for new developer setup
-* The `./bin/deploy` convention for deploying to Heroku
-* Rails' flashes set up and in application layout
-* A few nice time formats set up for localization
+    hashira-rails app --heroku false
+
+### Git
+
+The generator will automatically initialize a new Git repository after
+generating the app. You can disable this by saying:
+
+    hashira-rails app --skip-git true
+
+### GitHub
+
+You can tell the generator to create a GitHub repository along with the app if
+you wish. The generator will use [Hub] internally to do this, so you must have
+that installed first. Then you can say:
+
+    hashira-rails app --github organization/project
+
+[Hub]: https://github.com/github/hub
+
+### Spring
+
+As in a standard Rails app, Hashira will generate your Rails app configured with
+[Spring] by default. It makes Rails applications load faster, but it might
+introduce confusing issues around stale code not being refreshed. If you run
+into an issue during development and you think your application is running old
+code, you can run `spring stop` to reset Spring. And if you'd rather not use
+Spring, run `hashira-rails` with `DISABLE_SPRING=1`.
+
+[Spring]: https://github.com/rails/spring
+
+## Included gems
+
+Generated apps come bundled with a set of gems that we've found to be invaluable
+in our projects.
+
+### Gems for frontend developers
+
+* [Autoprefixer] for automatically augmenting CSS with vendor prefixes
+* [Normalize] for resetting browser styles
+* [Bitters], a foundation for elemental styles and settings
+* [Bourbon], a handy set of Sass mixins
+* [Neat], an unobtrusive grid system for laying out pages
+* [High Voltage], for making static pages such as HTML/CSS mockups
+
+[Normalize]: https://github.com/markmcconachie/normalize-rails
+[Autoprefixer]: https://github.com/ai/autoprefixer-rails
+[Bitters]: https://github.com/thoughtbot/bitters
+[Bourbon]: https://github.com/thoughtbot/bourbon
+[Neat]: https://github.com/thoughtbot/neat
+[High Voltage]: https://github.com/thoughtbot/high_voltage
+
+### Gems for backend developers
+
+#### Gems common to all environments
+
+* The [PG] gem (and related configuration) for connecting to PostgreSQL,
+  a capable, extensible, and generally awesome database
+* [Puma], a speedy, performant, and multi-threaded web server
+* [Simple Form], a nice DSL for creating forms whose HTML can be customized in
+  response to frontend developers
+* [Sidekiq] for running background jobs like a beast
+* [Sentry] for capturing exceptions that the app produces and logging them in a
+  really nice interface
+* [Flutie] for setting page titles with ease
+* [rack-canonical-host], for ensuring that the URL of the application that users
+  see is what we set it to be
+* [rack-timeout] for aborting requests that are take too long
+* [Recipient Interceptor] for preventing emails from being accidentally sent to
+  real people from within staging
+
+[PG]: https://github.com/ged/ruby-pg
+[Puma]: https://github.com/puma/puma
+[Simple Form]: https://github.com/plataformatec/simple_form
+[Sidekiq]: https://github.com/mperham/sidekiq
+[Sentry]: https://sentry.io
+[Flutie]: https://github.com/thoughtbot/flutie
+[rack-canonical-host]: https://github.com/tylerhunt/rack-canonical-host
+[rack-timeout]: https://github.com/heroku/rack-timeout
+[Recipient Interceptor]: https://github.com/croaky/recipient_interceptor
+
+#### Gems that are useful during the development process
+
+* [Dotenv] for keeping to the [twelve-factor guidelines] and making it possible
+  to store and load environment variables from a file
+* [pry-byebug] and [pry-rails] for debugging code interactively
+* [Awesome Print] for making values in the Rails console look pretty
+* [Bullet] to help kill N+1 queries and to identify unused eager loading
+* [bundler-audit] to alert developers of insecure gem dependencies based on
+  published CVEs
+* [rack-mini-profiler] for profiling the app as it is being developed
+
+[twelve-factor guidelines]: https://12factor.net/
+[Dotenv]: https://github.com/bkeepers/dotenv
+[pry-byebug]: https://github.com/deivid-rodriguez/pry-byebug
+[pry-rails]: https://github.com/rweng/pry-rails
+[Awesome Print]: https://github.com/awesome-print/awesome_print
+[Bullet]: https://github.com/flyerhzm/bullet
+[bundler-audit]: https://github.com/rubysec/bundler-audit
+[rack-mini-profiler]: https://github.com/MiniProfiler/rack-mini-profiler
+
+#### Testing-related gems
+
+* [RSpec] for unit testing Ruby
+* [Factory Girl] for creating test data in RSpec tests on the fly
+* [Capybara] and [Poltergeist] for integration testing
+* [Shoulda Matchers] for writing model tests for validations and associations
+  with ease
+* [Timecop] for freezing time
+* [Teaspoon] and [Jasmine] for unit testing JavaScript
+
+[Capybara]: https://github.com/jnicklas/capybara
+[Poltergeist]: https://github.com/teampoltergeist/poltergeist
+[Factory Girl]: https://github.com/thoughtbot/factory_girl
+[RSpec]: https://github.com/rspec/rspec-rails
+[Shoulda Matchers]: https://github.com/thoughtbot/shoulda-matchers
+[Timecop]: https://github.com/travisjeffery/timecop
+[Teaspoon]: https://github.com/jejacks0n/teaspoon
+[Jasmine]: https://jasmine.github.io/
+
+### Other goodies
+
+Your generated Rails app also comes with these extras:
+
+* An expanded setup script that performs the following checks:
+  * Ensures that the correct version of Ruby is installed
+  * Ensures that Postgres and Redis are installed and running
+  * Ensures that Rubocop and ESLint are installed so that code can be autolinted
+    as it is written in editors like Vim
+  * Ensures that Bower is installed and installs Bower dependencies
+* A `bin/deploy` script for deploying the app to Heroku
+* Basic date and time formats in `config/locales/en.yml`
 * `Rack::Deflater` to [compress responses with Gzip][compress]
 * A [low database connection pool limit][pool]
 * [Safe binstubs][binstub]
-* [t() and l() in specs without prefixing with I18n][i18n]
+* [Usage of t() and l() in specs without a need to prefix it with `I18n.`][i18n]
 * An automatically-created `SECRET_KEY_BASE` environment variable in all
   environments
-* Configuration for [CircleCI][circle] Continuous Integration (tests)
-* Configuration for [Hound][hound] Continuous Integration (style)
-* The analytics adapter [Segment][segment] (and therefore config for Google
-  Analytics, Intercom, Facebook Ads, Twitter Ads, etc.)
+* Configuration for [CircleCI][circle]
+* Configuration for [Hound][hound]
+* HTML code for [Segment][segment] (a service that bridges analytics services
+  such as Google Analytics, Intercom, Facebook Ads, Twitter Ads, etc.)
 
 [setup]: https://robots.thoughtbot.com/bin-setup
 [compress]: https://robots.thoughtbot.com/content-compression-with-rack-deflater
@@ -115,95 +222,17 @@ Your generated Rails app also comes with:
 [hound]: https://houndci.com
 [segment]: https://segment.com
 
-## Heroku
-
-You can optionally create Heroku staging and production apps:
-
-    hashira-rails app --heroku true
-
-This:
-
-* Creates a staging and production Heroku app
-* Sets them as `staging` and `production` Git remotes
-* Configures staging with `RACK_ENV` environment variable set
-  to `staging`
-* Adds the [Rails Stdout Logging][logging-gem] gem
-  to configure the app to log to standard out,
-  which is how [Heroku's logging][heroku-logging] works.
-* Creates a [Heroku Pipeline] for review apps
-
-[logging-gem]: https://github.com/heroku/rails_stdout_logging
-[heroku-logging]: https://devcenter.heroku.com/articles/logging#writing-to-your-log
-[Heroku Pipeline]: https://devcenter.heroku.com/articles/pipelines
-
-You can optionally specify alternate Heroku flags:
-
-    hashira-rails app \
-      --heroku true \
-      --heroku-flags "--region eu --addons sendgrid,ssl"
-
-See all possible Heroku flags:
-
-    heroku help create
-
-## Git
-
-This will initialize a new git repository for your Rails app. You can
-bypass this with the `--skip-git` option:
-
-    hashira-rails app --skip-git true
-
-## GitHub
-
-You can optionally create a GitHub repository for the generated Rails app. It
-requires that you have [Hub](https://github.com/github/hub) on your system:
-
-    curl http://hub.github.com/standalone -sLo ~/bin/hub && chmod +x ~/bin/hub
-    hashira-rails app --github organization/project
-
-This has the same effect as running:
-
-    hub create organization/project
-
-## Spring
-
-Your Rails app will be generated with [Spring](https://github.com/rails/spring)
-by default. It makes Rails applications load faster, but it might introduce
-confusing issues around stale code not being refreshed. If you think your
-application is running old code, run `spring stop`. And if you'd rather not use
-spring, add `DISABLE_SPRING=1` to your login file.
-
-## Dependencies
-
-In order to use this gem, you must have the latest version of Ruby.
-
-Some gems included in your app will have native extensions. You should have GCC
-installed on your machine before generating an app.
-
-Use [OS X GCC Installer](https://github.com/kennethreitz/osx-gcc-installer/) for
-Snow Leopard (OS X 10.6).
-
-Use [Command Line Tools for Xcode](https://developer.apple.com/downloads/index.action)
-for Lion (OS X 10.7) or Mountain Lion (OS X 10.8).
-
-We use [Capybara WebKit](https://github.com/thoughtbot/capybara-webkit) for
-full-stack JavaScript integration testing. It requires QT. Instructions for
-installing QT are
-[here](https://github.com/thoughtbot/capybara-webkit/wiki/Installing-Qt-and-compiling-capybara-webkit).
-
-PostgreSQL needs to be installed and running for the `db:create` rake task.
-
 ## Issues
 
-If you have problems, please create a
-[GitHub Issue](https://github.com/mcmire/hashira-rails/issues).
+If you run into problems while using this gem, please create an [issue].
 
-## License
+[issue]: https://github.com/Mossio/hashira-rails/issues
 
-hashira-rails is copyright © 2016 Elliot Winkler.
-It is adapted from [Suspenders], a [thoughtbot] project.
-It is free software, and may be redistributed under the terms specified in the
-[LICENSE] file.
+## Legal stuff
+
+hashira-rails is copyright © 2016 Elliot Winkler and the Mossio team. It is
+adapted from [Suspenders], a [thoughtbot] project. It is free software, and may
+be redistributed under the terms specified in the [LICENSE] file.
 
 [Suspenders]: https://github.com/thoughtbot/suspenders
 [thoughtbot]: http://thoughtbot.com
