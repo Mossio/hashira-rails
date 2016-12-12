@@ -26,199 +26,213 @@ module Hashira
     class_option :path, type: :string, default: nil,
       desc: "Path to the gem"
 
+    class_option :profile, type: :boolean, default: false,
+      desc: "Profile generator steps and print a report at the end"
+
+    def initialize(*)
+      super
+
+      if options[:profile]
+        @profile = Hashira::Rails::Profile.instance
+      else
+        @profile = Hashira::Rails::InertProfile.new
+      end
+    end
+
     def finish_template
-      invoke :hashira_customization
+      invoke_with_profiling :hashira_customization
+      profile.report
       super
     end
 
     def hashira_customization
-      invoke :customize_gemfile
-      invoke :setup_development_environment
-      invoke :setup_test_environment
-      invoke :setup_production_environment
-      invoke :setup_secret_token
-      invoke :create_hashira_views
-      invoke :configure_app
-      invoke :copy_miscellaneous_files
-      invoke :customize_error_pages
-      invoke :remove_config_comment_lines
-      invoke :remove_routes_comment_lines
-      invoke :setup_dotfiles
-      invoke :setup_git
-      invoke :setup_database
-      invoke :create_local_heroku_setup
-      invoke :create_heroku_apps
-      invoke :create_github_repo
-      invoke :setup_segment
-      invoke :setup_bundler_audit
-      invoke :setup_spring
-      invoke :generate_default
-      invoke :outro
+      invoke_with_profiling :customize_gemfile
+      invoke_with_profiling :setup_development_environment
+      invoke_with_profiling :setup_test_environment
+      invoke_with_profiling :setup_production_environment
+      invoke_with_profiling :setup_secret_token
+      invoke_with_profiling :create_hashira_views
+      invoke_with_profiling :configure_app
+      invoke_with_profiling :copy_miscellaneous_files
+      invoke_with_profiling :customize_error_pages
+      invoke_with_profiling :remove_config_comment_lines
+      invoke_with_profiling :remove_routes_comment_lines
+      invoke_with_profiling :setup_dotfiles
+      invoke_with_profiling :setup_git
+      invoke_with_profiling :setup_database
+      invoke_with_profiling :create_local_heroku_setup
+      invoke_with_profiling :create_heroku_apps
+      invoke_with_profiling :create_github_repo
+      invoke_with_profiling :setup_segment
+      invoke_with_profiling :setup_bundler_audit
+      invoke_with_profiling :setup_spring
+      invoke_with_profiling :generate_default
+      invoke_with_profiling :outro
     end
 
     def customize_gemfile
-      build :replace_gemfile, options[:path]
-      build :set_ruby_to_version_being_used
+      build_with_profiling :replace_gemfile, options[:path]
+      build_with_profiling :set_ruby_to_version_being_used
       bundle_command 'install'
-      build :configure_simple_form
+      build_with_profiling :configure_simple_form
     end
 
     def setup_database
       say 'Setting up database'
 
       if 'postgresql' == options[:database]
-        build :use_postgres_config_template
+        build_with_profiling :use_postgres_config_template
       end
 
-      build :create_database
+      build_with_profiling :create_database
     end
 
     def setup_development_environment
       say 'Setting up the development environment'
-      build :raise_on_missing_assets_in_test
-      build :raise_on_delivery_errors
-      build :remove_turbolinks
-      build :set_test_delivery_method
-      build :add_bullet_gem_configuration
-      build :raise_on_unpermitted_parameters
-      build :provide_setup_script
-      build :provide_dev_prime_task
-      build :configure_generators
-      build :configure_i18n_for_missing_translations
-      build :configure_quiet_assets
+      build_with_profiling :raise_on_missing_assets_in_test
+      build_with_profiling :raise_on_delivery_errors
+      build_with_profiling :remove_turbolinks
+      build_with_profiling :set_test_delivery_method
+      build_with_profiling :add_bullet_gem_configuration
+      build_with_profiling :raise_on_unpermitted_parameters
+      build_with_profiling :provide_setup_script
+      build_with_profiling :provide_dev_prime_task
+      build_with_profiling :configure_generators
+      build_with_profiling :configure_i18n_for_missing_translations
+      build_with_profiling :configure_quiet_assets
     end
 
     def setup_test_environment
       say 'Setting up the test environment'
-      build :set_up_factory_girl_for_rspec
-      build :generate_factories_file
-      build :set_up_hound
-      build :generate_rspec
-      build :configure_rspec
-      build :enable_database_cleaner
-      build :provide_shoulda_matchers_config
-      build :configure_spec_support_features
-      build :configure_ci
-      build :configure_i18n_for_test_environment
-      build :configure_action_mailer_in_specs
-      build :configure_capybara_webkit
-      build :remove_test_directory
+      build_with_profiling :set_up_factory_girl_for_rspec
+      build_with_profiling :generate_factories_file
+      build_with_profiling :set_up_hound
+      build_with_profiling :generate_rspec
+      build_with_profiling :configure_rspec
+      build_with_profiling :enable_database_cleaner
+      build_with_profiling :provide_shoulda_matchers_config
+      build_with_profiling :configure_spec_support_features
+      build_with_profiling :configure_ci
+      build_with_profiling :configure_i18n_for_test_environment
+      build_with_profiling :configure_action_mailer_in_specs
+      build_with_profiling :configure_capybara_webkit
+      build_with_profiling :remove_test_directory
     end
 
     def setup_production_environment
       say 'Setting up the production environment'
-      build :configure_smtp
-      build :configure_rack_timeout
-      build :enable_rack_canonical_host
-      build :enable_rack_deflater
-      build :setup_asset_host
+      build_with_profiling :configure_smtp
+      build_with_profiling :configure_rack_timeout
+      build_with_profiling :enable_rack_canonical_host
+      build_with_profiling :enable_rack_deflater
+      build_with_profiling :setup_asset_host
     end
 
     def setup_secret_token
       say 'Moving secret token out of version control'
-      build :setup_secret_token
+      build_with_profiling :setup_secret_token
     end
 
     def create_hashira_views
       say 'Creating hashira views'
-      build :create_partials_directory
-      build :create_shared_flashes
-      build :create_shared_javascripts
-      build :create_shared_css_overrides
-      build :create_application_layout
+      build_with_profiling :create_partials_directory
+      build_with_profiling :create_shared_flashes
+      build_with_profiling :create_shared_javascripts
+      build_with_profiling :create_shared_css_overrides
+      build_with_profiling :create_application_layout
     end
 
     def configure_app
       say 'Configuring app'
-      build :configure_action_mailer
-      build :configure_active_job
-      build :configure_sidekiq
-      build :configure_time_formats
-      build :setup_default_rake_task
-      build :replace_default_puma_configuration
-      build :set_up_forego
-      build :setup_rack_mini_profiler
-      build :add_bower
-      build :add_teaspoon
+      build_with_profiling :configure_action_mailer
+      build_with_profiling :configure_active_job
+      build_with_profiling :configure_sidekiq
+      build_with_profiling :configure_time_formats
+      build_with_profiling :setup_default_rake_task
+      build_with_profiling :replace_default_puma_configuration
+      build_with_profiling :set_up_forego
+      build_with_profiling :setup_rack_mini_profiler
+      build_with_profiling :add_bower
+      build_with_profiling :add_teaspoon
     end
 
     def setup_git
       if !options[:skip_git]
         say "Initializing git"
-        invoke :setup_default_directories
-        invoke :init_git
+        invoke_with_profiling :setup_default_directories
+        invoke_with_profiling :init_git
       end
     end
 
     def create_local_heroku_setup
       say "Creating local Heroku setup"
-      build :create_review_apps_setup_script
-      build :create_deploy_script
-      build :create_heroku_application_manifest_file
+      build_with_profiling :create_review_apps_setup_script
+      build_with_profiling :create_deploy_script
+      build_with_profiling :create_heroku_application_manifest_file
     end
 
     def create_heroku_apps
       if options[:heroku]
         say "Creating Heroku apps"
-        build :create_heroku_apps, options[:heroku_flags]
-        build :set_heroku_remotes
-        build :set_heroku_rails_secrets
-        build :set_heroku_application_host
-        build :create_heroku_pipeline
-        build :configure_automatic_deployment
+        build_with_profiling :create_heroku_apps, options[:heroku_flags]
+        build_with_profiling :set_heroku_remotes
+        build_with_profiling :set_heroku_rails_secrets
+        build_with_profiling :set_heroku_application_host
+        build_with_profiling :create_heroku_pipeline
+        build_with_profiling :configure_automatic_deployment
       end
     end
 
     def create_github_repo
       if !options[:skip_git] && options[:github]
         say 'Creating Github repo'
-        build :create_github_repo, options[:github]
+        build_with_profiling :create_github_repo, options[:github]
       end
     end
 
     def setup_segment
       say 'Setting up Segment'
-      build :setup_segment
+      build_with_profiling :setup_segment
     end
 
     def setup_dotfiles
-      build :copy_dotfiles
+      build_with_profiling :copy_dotfiles
     end
 
     def setup_default_directories
-      build :setup_default_directories
+      build_with_profiling :setup_default_directories
     end
 
     def setup_bundler_audit
       say "Setting up bundler-audit"
-      build :setup_bundler_audit
+      build_with_profiling :setup_bundler_audit
     end
 
     def setup_spring
       say "Springifying binstubs"
-      build :setup_spring
+      build_with_profiling :setup_spring
     end
 
     def init_git
-      build :init_git
+      build_with_profiling :init_git
     end
 
     def copy_miscellaneous_files
       say 'Copying miscellaneous support files'
-      build :copy_miscellaneous_files
+      build_with_profiling :copy_miscellaneous_files
     end
 
     def customize_error_pages
       say 'Customizing the 500/404/422 pages'
-      build :customize_error_pages
+      build_with_profiling :customize_error_pages
     end
 
     def remove_config_comment_lines
-      build :remove_config_comment_lines
+      build_with_profiling :remove_config_comment_lines
     end
 
     def remove_routes_comment_lines
-      build :remove_routes_comment_lines
+      build_with_profiling :remove_routes_comment_lines
     end
 
     def generate_default
@@ -243,6 +257,18 @@ module Hashira
 
     def using_active_record?
       !options[:skip_active_record]
+    end
+
+    private
+
+    attr_reader :profile
+
+    def invoke_with_profiling(name)
+      profile.measuring_node(:invoke, name) { invoke(name) }
+    end
+
+    def build_with_profiling(name, *args)
+      profile.measuring_node(:build, name) { build(name, *args) }
     end
   end
 end
