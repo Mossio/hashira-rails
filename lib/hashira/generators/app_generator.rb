@@ -1,8 +1,14 @@
-require 'rails/generators'
-require 'rails/generators/rails/app/app_generator'
+require "rails/generators"
+require "rails/generators/rails/app/app_generator"
+require "hashira/generators/static_generator"
+require "hashira/generators/stylesheet_base_generator"
 
 module Hashira
   class AppGenerator < ::Rails::Generators::AppGenerator
+    def self.banner
+      "hashira-rails #{arguments.map(&:usage).join(' ')} [options]"
+    end
+
     hide!
 
     class_option :database, type: :string, aliases: "-d", default: "postgresql",
@@ -29,62 +35,101 @@ module Hashira
     class_option :profile, type: :boolean, default: false,
       desc: "Profile generator steps and print a report at the end"
 
+    DEFAULT_GENERATORS = [
+      {
+        name: :static,
+        class: Hashira::StaticGenerator,
+      },
+      {
+        name: :stylesheet_base,
+        class: Hashira::StylesheetBaseGenerator,
+      },
+    ]
+
     def initialize(*)
       super
 
-      if options[:profile]
-        @profile = Hashira::Rails::Profile.instance
-      else
-        @profile = Hashira::Rails::InertProfile.new
-      end
+      @profile =
+        if options[:profile]
+          Hashira::Rails::Profile.instance
+        else
+          Hashira::Rails::InertProfile.new
+        end
     end
 
     def finish_template
-      invoke_with_profiling :hashira_customization
-      profile.report
+      build_with_profiling :set_ruby_to_version_being_used
+
+      setup_spring
+      configure_simple_form
+      setup_development_environment
+      setup_test_environment
+      setup_production_environment
+      setup_secret_token
+      create_hashira_views
+      configure_app
+      copy_miscellaneous_files
+      customize_error_pages
+      remove_config_comment_lines
+      remove_routes_comment_lines
+      setup_dotfiles
+      setup_git
+      setup_database
+      create_local_heroku_setup
+      create_heroku_apps
+      create_github_repo
+      setup_segment
+      setup_bundler_audit
+      generate_default
+
       super
     end
 
-    def hashira_customization
-      invoke_with_profiling :customize_gemfile
-      invoke_with_profiling :setup_development_environment
-      invoke_with_profiling :setup_test_environment
-      invoke_with_profiling :setup_production_environment
-      invoke_with_profiling :setup_secret_token
-      invoke_with_profiling :create_hashira_views
-      invoke_with_profiling :configure_app
-      invoke_with_profiling :copy_miscellaneous_files
-      invoke_with_profiling :customize_error_pages
-      invoke_with_profiling :remove_config_comment_lines
-      invoke_with_profiling :remove_routes_comment_lines
-      invoke_with_profiling :setup_dotfiles
-      invoke_with_profiling :setup_git
-      invoke_with_profiling :setup_database
-      invoke_with_profiling :create_local_heroku_setup
-      invoke_with_profiling :create_heroku_apps
-      invoke_with_profiling :create_github_repo
-      invoke_with_profiling :setup_segment
-      invoke_with_profiling :setup_bundler_audit
-      invoke_with_profiling :setup_spring
-      invoke_with_profiling :generate_default
-      invoke_with_profiling :outro
+    def outro
+      say 'The Rails application is now created!'
     end
 
-    def customize_gemfile
-      build_with_profiling :replace_gemfile, options[:path]
-      build_with_profiling :set_ruby_to_version_being_used
-      bundle_command 'install'
-      build_with_profiling :configure_simple_form
+    def display_profiling_report
+      profile.report
+    end
+
+    protected
+
+    def get_builder_class
+      Hashira::Rails::AppBuilder
+    end
+
+    def using_active_record?
+      !options[:skip_active_record]
+    end
+
+    private
+
+    attr_reader :profile, :default_generators
+
+    def default_generators
+      @_default_generators ||=
+        DEFAULT_GENERATORS.map do |generator|
+          instance = generator[:class].new(
+            ARGV,
+            {},
+            destination_root: destination_root,
+          )
+          instance.parent_generator = self
+          { name: generator[:name], instance: instance }
+        end
     end
 
     def setup_database
       say 'Setting up database'
 
-      if 'postgresql' == options[:database]
+      if options[:database] == 'postgresql'
         build_with_profiling :use_postgres_config_template
       end
 
-      build_with_profiling :create_database
+      after_bundle do
+        build_with_profiling :create_database
+      end
     end
 
     def setup_development_environment
@@ -107,8 +152,11 @@ module Hashira
       build_with_profiling :set_up_factory_girl_for_rspec
       build_with_profiling :generate_factories_file
       build_with_profiling :set_up_hound
-      build_with_profiling :generate_rspec
-      build_with_profiling :configure_rspec
+
+      after_bundle do
+        build_with_profiling :generate_rspec
+      end
+
       build_with_profiling :enable_database_cleaner
       build_with_profiling :provide_shoulda_matchers_config
       build_with_profiling :configure_spec_support_features
@@ -152,15 +200,21 @@ module Hashira
       build_with_profiling :replace_default_puma_configuration
       build_with_profiling :set_up_forego
       build_with_profiling :setup_rack_mini_profiler
-      build_with_profiling :add_bower
-      build_with_profiling :add_teaspoon
+
+      after_bundle do
+        build_with_profiling :add_bower
+      end
+
+      after_bundle do
+        build_with_profiling :add_teaspoon
+      end
     end
 
     def setup_git
       if !options[:skip_git]
         say "Initializing git"
-        invoke_with_profiling :setup_default_directories
-        invoke_with_profiling :init_git
+        setup_default_directories
+        init_git
       end
     end
 
@@ -208,11 +262,6 @@ module Hashira
       build_with_profiling :setup_bundler_audit
     end
 
-    def setup_spring
-      say "Springifying binstubs"
-      build_with_profiling :setup_spring
-    end
-
     def init_git
       build_with_profiling :init_git
     end
@@ -236,39 +285,51 @@ module Hashira
     end
 
     def generate_default
-      run("spring stop")
-      generate("hashira:static")
-      generate("hashira:stylesheet_base")
+      default_generators.each do |generator|
+        directly_generate(generator)
+      end
     end
 
-    def outro
-      say 'The Rails application is now created!'
+    def setup_spring
+      after_bundle do
+        build_with_profiling :setup_spring
+      end
     end
 
-    def self.banner
-      "hashira-rails #{arguments.map(&:usage).join(' ')} [options]"
-    end
-
-    protected
-
-    def get_builder_class
-      Hashira::Rails::AppBuilder
-    end
-
-    def using_active_record?
-      !options[:skip_active_record]
-    end
-
-    private
-
-    attr_reader :profile
-
-    def invoke_with_profiling(name)
-      profile.measuring_node(:invoke, name) { invoke(name) }
+    def configure_simple_form
+      after_bundle do
+        build_with_profiling :configure_simple_form
+      end
     end
 
     def build_with_profiling(name, *args)
-      profile.measuring_node(:build, name) { build(name, *args) }
+      profile.measuring_build(name) { build(name, *args) }
+    end
+
+    # Override to use Spring
+    def generate(what, *args)
+      log :generate, what
+      argument = args.flat_map(&:to_s).join(" ")
+      run_spring_command("rails generate #{what} #{argument}", log: false)
+    end
+
+    def run_spring_command(command, log: true)
+      run_command_in_app("bin/spring #{command}", log: log)
+    end
+
+    def run_command_in_app(command, log: true)
+      if log
+        log(:run, command)
+      end
+
+      in_root do
+        run_ruby_script command, verbose: false
+      end
+    end
+
+    def directly_generate(generator)
+      log :generate, generator[:name]
+      generator[:instance].invoke_all
     end
   end
 end

@@ -1,7 +1,5 @@
 require "hashira/rails/version"
 require "hashira/generators/app_generator"
-require "hashira/generators/static_generator"
-require "hashira/generators/stylesheet_base_generator"
 require "hashira/rails/actions"
 require "hashira/rails/adapters/heroku"
 require "hashira/rails/app_builder"

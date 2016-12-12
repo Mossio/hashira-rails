@@ -25,7 +25,15 @@ module Hashira
       end
 
       def gemfile
-        template "Gemfile.erb", "Gemfile"
+        template "Gemfile.erb", "Gemfile", force: true do |content|
+          if options[:path]
+            content.gsub(%r{gem .hashira-rails.}) do |matched_string|
+              %{#{matched_string}, path: "#{options[:path]}"}
+            end
+          else
+            content
+          end
+        end
       end
 
       def setup_rack_mini_profiler
@@ -227,17 +235,7 @@ module Hashira
       end
 
       def create_database
-        bundle_command 'exec rake db:create db:migrate'
-      end
-
-      def replace_gemfile(path)
-        template 'Gemfile.erb', 'Gemfile', force: true do |content|
-          if path
-            content.gsub(%r{gem .hashira-rails.}) { |s| %{#{s}, path: "#{path}"} }
-          else
-            content
-          end
-        end
+        run_spring_command("rails db:create db:migrate")
       end
 
       def set_ruby_to_version_being_used
@@ -260,7 +258,8 @@ module Hashira
         empty_directory_with_keep_file 'spec/support/features'
       end
 
-      def configure_rspec
+      def generate_rspec
+        generate "rspec:install"
         remove_file "spec/rails_helper.rb"
         remove_file "spec/spec_helper.rb"
         copy_file "rails_helper.rb", "spec/rails_helper.rb"
@@ -322,10 +321,6 @@ module Hashira
 
       def configure_sidekiq
         copy_file "sidekiq.yml", "config/sidekiq.yml", force: true
-      end
-
-      def generate_rspec
-        generate 'rspec:install'
       end
 
       def replace_default_puma_configuration
@@ -392,10 +387,6 @@ module Hashira
       def setup_bundler_audit
         copy_file "bundler_audit.rake", "lib/tasks/bundler_audit.rake"
         append_file "Rakefile", %{\ntask default: "bundler:audit"\n}
-      end
-
-      def setup_spring
-        bundle_command "exec spring binstub --all"
       end
 
       def copy_miscellaneous_files
@@ -468,6 +459,10 @@ module Hashira
 
       def add_teaspoon
         generate "teaspoon:install"
+      end
+
+      def setup_spring
+        run_command_in_app "bin/spring stop"
       end
 
       private
