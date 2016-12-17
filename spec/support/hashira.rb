@@ -117,7 +117,7 @@ module HashiraTestHelpers
   end
 
   def fake_executables_directory
-    project_directory.join("spec/fakes/bin")
+    project_directory.join("spec/support/fake_executables")
   end
 
   def project_directory

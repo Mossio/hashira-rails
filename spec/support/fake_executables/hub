@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+require_relative "../fake_github"
+
+FakeGithub.run(ARGV)
