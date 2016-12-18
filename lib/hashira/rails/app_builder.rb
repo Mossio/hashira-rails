@@ -1,4 +1,6 @@
 require "forwardable"
+require "hashira/rails/actions"
+require "hashira/rails/adapters/heroku"
 
 module Hashira
   module Rails

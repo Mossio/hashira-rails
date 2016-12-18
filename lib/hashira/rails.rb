@@ -1,7 +1,6 @@
 require "hashira/rails/version"
 require "hashira/generators/app_generator"
-require "hashira/rails/actions"
-require "hashira/rails/adapters/heroku"
+require "hashira/generators/core_generator"
 require "hashira/rails/app_builder"
 require "hashira/rails/inert_profile"
 require "hashira/rails/profile"

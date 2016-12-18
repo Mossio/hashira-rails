@@ -8,7 +8,9 @@ module Hashira
   module Test; end
 end
 
-Dir['./spec/support/**/*.rb'].each { |file| require file }
+Dir.glob(
+  File.expand_path("../support/{.,helpers,matchers}/*.rb", __FILE__)
+).each { |file| require file }
 
 RSpec.configure do |config|
   config.include HashiraTestHelpers

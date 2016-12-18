@@ -2,7 +2,11 @@ source "https://rubygems.org"
 
 ruby "<%= Hashira::Rails::RUBY_VERSION %>"
 
+<%- if options[:path] -%>
+gem "hashira-rails", path: "<%= options[:path] %>"
+<%- else -%>
 gem "hashira-rails"
+<%- end -%>
 gem "autoprefixer-rails"
 gem "bower"
 gem "flutie"

@@ -33,11 +33,5 @@ module Hashira
         run "bitters install --path app/assets/stylesheets"
       end
     end
-
-    def run_bundle
-      if !parent_generator
-        bundle_command("install")
-      end
-    end
   end
 end

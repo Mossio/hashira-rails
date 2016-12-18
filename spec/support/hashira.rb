@@ -1,5 +1,5 @@
 module HashiraTestHelpers
-  APP_NAME = "dummy_app"
+  APP_NAME = "dummy_app".freeze
 
   extend self
 
@@ -10,6 +10,7 @@ module HashiraTestHelpers
   def create_tmp_directory
     tmp_directory.mkpath
   end
+  alias_method :create_working_directory, :create_tmp_directory
 
   def generate_app(*additional_args)
     args = [
@@ -31,23 +32,28 @@ module HashiraTestHelpers
     run_command!(
       hashira_rails_executable_path.to_s,
       *args,
-    )
-  end
-
-  def run_command_within_app(*args)
-    run_command(*args) do |runner|
-      runner.directory = app_directory
+    ) do |runner|
+      runner.directory = tmp_directory
     end
   end
 
-  def run_command_within_app!(*args)
-    run_command!(*args) do |runner|
-      runner.directory = app_directory
-    end
+  def run_hashira_generator(name, *additional_args)
+    args = [
+      "--path=#{project_directory}",
+      "--force",
+      *additional_args,
+    ]
+
+    FakeGithub.clear
+    FakeHeroku.clear
+    drop_app_database!
+    copy_existing_app_to_working_directory
+    install_app_dependencies!
+    run_command!("bin/rails g hashira:#{name}")
   end
 
   def app_directory
-    tmp_directory.join(APP_NAME)
+    working_directory.join(APP_NAME)
   end
 
   def file_in_app(path)
@@ -66,6 +72,10 @@ module HashiraTestHelpers
     pieces.join(", ")
   end
 
+  def gemfile
+    file_in_app("Gemfile")
+  end
+
   private
 
   def install_app_dependencies!
@@ -76,10 +86,18 @@ module HashiraTestHelpers
     end
   end
 
+  def copy_existing_app_to_working_directory
+    FileUtils.rm_rf(app_directory)
+    FileUtils.cp_r(existing_app_directory, app_directory)
+  end
+
   def drop_app_database!
-    if app_directory.exist?
-      run_command_within_app!("bundle exec rake db:drop")
-    end
+    Hashira::Test::CommandRunner.run!(
+      "dropdb --if-exists #{APP_NAME}_development"
+    )
+    Hashira::Test::CommandRunner.run!(
+      "dropdb --if-exists #{APP_NAME}_test"
+    )
   end
 
   def run_command(*args, &block)
@@ -87,6 +105,7 @@ module HashiraTestHelpers
       runner.call
     end
   end
+  alias_method :run_command_within_app, :run_command
 
   def run_command!(*args, &block)
     build_command_runner(*args, &block).tap do |runner|
@@ -94,10 +113,11 @@ module HashiraTestHelpers
       runner.call
     end
   end
+  alias_method :run_command_within_app!, :run_command!
 
   def build_command_runner(*args)
     Hashira::Test::CommandRunner.new(*args).tap do |runner|
-      runner.directory = tmp_directory
+      runner.directory = app_directory
       runner.env["PATH"] = "#{fake_executables_directory}:#{ENV["PATH"]}"
 
       yield runner if block_given?
@@ -110,6 +130,11 @@ module HashiraTestHelpers
 
   def tmp_directory
     project_directory.join("tmp")
+  end
+  alias_method :working_directory, :tmp_directory
+
+  def existing_app_directory
+    project_directory.join("spec/support/dummy_app")
   end
 
   def hashira_rails_executable_path

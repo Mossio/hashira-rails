@@ -5,7 +5,11 @@ module Hashira::Test
     end
 
     def contain_line(content)
-      ContainText.new(content, :stripped_line)
+      if content.is_a?(Regexp)
+        ContainText.new(content, :line)
+      else
+        ContainText.new(content, :stripped_line)
+      end
     end
 
     class ContainText
@@ -35,8 +39,10 @@ module Hashira::Test
       def failure_message
         message = "Expected #{simplified_file_path.inspect}\nto "
         message << expectation
-        message << "However, it did not. Actual content was:\n\n"
-        message << divider("START") + actual_content + divider("END")
+        message << "However, it did not. Full content of file is:\n\n"
+        message << divider("START")
+        message << actual_content_with_ending_line
+        message << divider("END")
       end
 
       def failure_message_when_negated
@@ -50,9 +56,12 @@ module Hashira::Test
       attr_reader :expected_content, :pathname, :matching_strategy
 
       def expectation
+        message = ""
+
         if matching_strategy == :stripped_line
-          message << "have a line which, after being stripped, is"
-          message << "#{expected_content.inspect}.\n\n"
+          message << "have a stripped line:\n\n"
+          message << "  " + expected_content
+          message << "\n\n"
         elsif matching_strategy == :line
           if expected_content.is_a?(String)
             message << "have a line which is #{expected_content.inspect}.\n\n"
@@ -84,16 +93,24 @@ module Hashira::Test
         actual_content.split("\n")
       end
 
-      def actual_content
-        @_actual_content ||= pathname.read
-      end
-
       def expected_content_with_ending_line
         if expected_content.end_with?("\n")
           expected_content
         else
           expected_content + "\n"
         end
+      end
+
+      def actual_content_with_ending_line
+        if actual_content.end_with?("\n")
+          actual_content
+        else
+          actual_content + "\n"
+        end
+      end
+
+      def actual_content
+        @_actual_content ||= pathname.read
       end
     end
   end

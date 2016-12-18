@@ -1,12 +1,11 @@
-if Rails.env.development? || Rails.env.test?
-  require "factory_girl"
+namespace :dev do
+  desc "Set up the development environment"
+  task prime: ["db:reset", "dev:db:seed"]
 
-  namespace :dev do
-    desc "Sample data for local development environment"
-    task prime: "db:setup" do
-      include FactoryGirl::Syntax::Methods
-
-      # create(:user, email: "user@example.com", password: "password")
+  namespace :db do
+    desc "Seed the development database"
+    task seed: :environment do |t, args|
+      DevelopmentSoil.seed(*args.extras)
     end
   end
 end
