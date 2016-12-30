@@ -61,13 +61,12 @@ module Hashira
         Hashira::Rails::CleanUpSpacingIn.(relative_path)
       end
 
-      private
+      def set_executable(relative_path)
+        FileUtils.chmod_R("+x", path_to_file(relative_path))
+      end
 
       def path_to_file(relative_path)
         Pathname.new(File.join(destination_root, relative_path))
-      end
-
-      class Group < Array
       end
     end
   end

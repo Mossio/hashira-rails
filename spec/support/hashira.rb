@@ -1,7 +1,13 @@
+require "json"
+
 module HashiraTestHelpers
   APP_NAME = "dummy_app".freeze
 
   extend self
+
+  def app_name
+    APP_NAME
+  end
 
   def remove_app_directory
     FileUtils.rm_rf(app_directory)
@@ -14,7 +20,7 @@ module HashiraTestHelpers
 
   def generate_app(*additional_args)
     args = [
-      APP_NAME,
+      app_name,
       "--path=#{project_directory}",
       "--force",
       *additional_args
@@ -37,23 +43,33 @@ module HashiraTestHelpers
     end
   end
 
-  def run_hashira_generator(name, *additional_args)
-    args = [
-      "--path=#{project_directory}",
-      "--force",
-      *additional_args,
-    ]
+  def run_hashira_generator(name, options = {})
+    app_name = options.delete(:app_name)
+    args = options.map do |key, value|
+      "--#{key.to_s.dasherize}=#{value.inspect}"
+    end
 
     FakeGithub.clear
     FakeHeroku.clear
     drop_app_database!
     copy_existing_app_to_working_directory
     install_app_dependencies!
-    run_command!("bin/rails g hashira:#{name}")
+
+    if app_name
+      set_app_name(app_name)
+    end
+
+    run_command!("rails", "g", "hashira:#{name}", *args)
+    run_command!("spring stop")
+  end
+
+  def set_app_name(app_name)
+    data = JSON.generate({ app_name: app_name })
+    File.write(file_in_app(".hashira.json"), data)
   end
 
   def app_directory
-    working_directory.join(APP_NAME)
+    working_directory.join(app_name)
   end
 
   def file_in_app(path)
@@ -93,10 +109,10 @@ module HashiraTestHelpers
 
   def drop_app_database!
     Hashira::Test::CommandRunner.run!(
-      "dropdb --if-exists #{APP_NAME}_development"
+      "dropdb --if-exists #{app_name}_development"
     )
     Hashira::Test::CommandRunner.run!(
-      "dropdb --if-exists #{APP_NAME}_test"
+      "dropdb --if-exists #{app_name}_test"
     )
   end
 

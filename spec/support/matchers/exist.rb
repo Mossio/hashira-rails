@@ -23,7 +23,7 @@ module Hashira::Test
       attr_reader :pathname
 
       def simplified_file_path
-        pathname.sub(Hashira::Test.project_directory.to_s, "~").to_s
+        pathname.sub(HashiraTestHelpers.app_directory.to_s, "$APPDIR").to_s
       end
     end
   end

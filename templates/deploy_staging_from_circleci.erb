@@ -1,0 +1,10 @@
+#!/bin/sh
+
+set -e
+
+APP="<%= heroku_app_name %>-staging"
+
+git remote add heroku "git@heroku.com:${APP}.git"
+git push heroku "${CIRCLE_SHA1}:master"
+heroku run rake db:migrate --app "${APP}"
+heroku restart --app "${APP}"

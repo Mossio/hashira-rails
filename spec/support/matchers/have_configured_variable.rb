@@ -28,7 +28,7 @@ module Hashira::Test
       attr_reader :variable_name, :remote_name, :matcher
 
       def command
-        /config:add #{variable_name}=.+ --remote #{remote_name}/
+        /config:set #{variable_name}=.+ --remote #{remote_name}/
       end
     end
   end

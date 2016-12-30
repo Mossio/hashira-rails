@@ -34,13 +34,11 @@ module Hashira::Test
       end
 
       def init_pipeline_with_staging_app_command
-        "pipelines:create #{app_name} -a #{app_name}-staging " +
-          "--stage staging --remote staging"
+        "pipelines:create #{app_name} --remote staging --stage staging"
       end
 
       def add_production_app_to_pipeline_command
-        "pipelines:add #{app_name} -a #{app_name}-production " +
-          "--stage production --remote production"
+        "pipelines:add #{app_name} --remote production --stage production"
       end
     end
   end

@@ -1,39 +1,54 @@
 {
-  "name":"<%= app_name.dasherize %>",
-  "scripts":{},
-  "env":{
-    "APPLICATION_HOST":{
-      "required":true
+  "addons": [
+    "heroku-postgresql",
+    "heroku-redis",
+    {
+      "plan": "deployhooks:http",
+      "url": "<%= options[:slack_webhook_url] %>"
+    }
+  ],
+  "name": "<%= heroku_app_name %>",
+  "env": {
+    "APPLICATION_HOST": {
+      "required": true
     },
-    "EMAIL_RECIPIENTS":{
-      "required":true
+    "COOKIE_DOMAIN": {
+      "required": true
+    },
+    "EMAIL_RECIPIENTS": {
+      "required": true
     },
     "HEROKU_APP_NAME": {
-      "required":true
+      "required": true
     },
     "HEROKU_PARENT_APP_NAME": {
-      "required":true
+      "required": true
     },
-    "RACK_ENV":{
-      "required":true
+    "RACK_ENV": {
+      "required": true
     },
-    "SECRET_KEY_BASE":{
-      "generator":"secret"
+    "SECRET_KEY_BASE": {
+      "generator": "secret"
     },
-    "SMTP_ADDRESS":{
-      "required":true
+    "SMTP_ADDRESS": {
+      "required": true
     },
-    "SMTP_DOMAIN":{
-      "required":true
+    "SMTP_DOMAIN": {
+      "required": true
     },
-    "SMTP_PASSWORD":{
-      "required":true
+    "SMTP_PASSWORD": {
+      "required": true
     },
-    "SMTP_USERNAME":{
-      "required":true
+    "SMTP_USERNAME": {
+      "required": true
     }
   },
-  "addons":[
-    "heroku-postgresql"
-  ]
+  "formation": {
+    "worker": {
+      "quantity": 1
+    }
+  },
+  "scripts": {
+    "postdeploy": "bin/rails db:migrate dev:db:seed"
+  }
 }

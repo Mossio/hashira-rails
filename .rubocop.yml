@@ -1,7 +1,6 @@
 AllCops:
   Exclude:
     - db/schema.rb
-
 Style/AccessorMethodName:
   Description: Check the naming of accessor methods for get_/set_.
   Enabled: false

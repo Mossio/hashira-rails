@@ -18,11 +18,20 @@ module Hashira::Test
       end
 
       def failure_message
-        "Expected `#{fake_executable.executable_name}` to have run these " +
+        message =
+          "Expected `#{fake_executable.executable_name}` to have run these " +
           "commands:\n\n" +
-          list_commands(expected_commands) + "\n" +
-          "But it ran these commands instead:\n\n" +
-          list_commands(actual_commands)
+          list_commands(expected_commands) + "\n"
+
+        if actual_commands.any?
+          message +=
+            "Here were all the commands that were run:\n\n" +
+            list_commands(actual_commands)
+        else
+          message += "No commands were run, though."
+        end
+
+        message
       end
 
       private
