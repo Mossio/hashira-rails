@@ -1,9 +1,9 @@
 require "spec_helper"
 
-RSpec.describe "Command line help output", type: :feature do
-  before(:all) do
-    @command = HashiraTestHelpers.run_hashira_rails_command!("--help")
-  end
+RSpec.xdescribe "Command line help output", type: :feature do
+  # before(:all) do
+    # @command = HashiraTestHelpers.run_hashira_rails_command!("--help")
+  # end
 
   attr_reader :command
 

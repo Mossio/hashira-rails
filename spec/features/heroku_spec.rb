@@ -1,10 +1,10 @@
 require "spec_helper"
 
-RSpec.describe "Heroku", type: :feature do
+RSpec.xdescribe "Heroku", type: :feature do
   context "--heroku" do
-    before(:all) do
-      generate_app("--heroku=true")
-    end
+    # before(:all) do
+      # generate_app("--heroku=true")
+    # end
 
     it "suspends a project for Heroku" do
       expect(FakeHeroku).
@@ -57,9 +57,9 @@ RSpec.describe "Heroku", type: :feature do
   end
 
   context "--heroku with region flag" do
-    before(:all) do
-      generate_app(%(--heroku=true --heroku-flags="--region eu"))
-    end
+    # before(:all) do
+      # generate_app(%(--heroku=true --heroku-flags="--region eu"))
+    # end
 
     it "suspends a project with extra Heroku flags" do
       expect(FakeHeroku).to have_created_app(

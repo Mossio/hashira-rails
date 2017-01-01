@@ -1,9 +1,9 @@
 require "spec_helper"
 
-RSpec.describe "Generating a new project with default configuration", type: :feature do
-  before(:all) do
-    generate_app
-  end
+RSpec.xdescribe "Generating a new project with default configuration", type: :feature do
+  # before(:all) do
+    # generate_app
+  # end
 
   it "uses custom Gemfile" do
     expect(gemfile).to contain_line %(ruby "#{Hashira::Rails::RUBY_VERSION}")
