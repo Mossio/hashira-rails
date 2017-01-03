@@ -2,7 +2,7 @@ require "spec_helper"
 
 RSpec.describe "The core generator", type: :feature do
   before(:all) do
-    run_hashira_generator(:core)
+    run_hashira_generator(:core, app_name: "some_app")
   end
 
   it "puts dotfiles in place" do
@@ -61,6 +61,16 @@ RSpec.describe "The core generator", type: :feature do
     # expect(file_in_app("app.json")).
       # to contain_text %("EMAIL_RECIPIENTS":)
   # end
+
+  it "replaces the README" do
+    readme = file_in_app("README.md")
+    ruby_version = Hashira::Rails::RUBY_VERSION
+
+    expect(readme).to contain_text("# Some App")
+    expect(readme).to contain_text("you will need to have Ruby #{ruby_version}")
+    expect(readme).to contain_text("you can install Ruby #{ruby_version}")
+    expect(readme).to contain_text("rbenv install #{ruby_version}")
+  end
 
   it "replaces the setup script" do
     expect(file_in_app("bin/setup")).

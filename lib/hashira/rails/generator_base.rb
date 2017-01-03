@@ -76,6 +76,20 @@ module Hashira
           end
         end
       end
+
+      def app_name
+        hashira_config_file = path_to_file(".hashira.json")
+
+        if hashira_config_file.exist?
+          JSON.parse(hashira_config_file.read)["app_name"]
+        else
+          File.basename(destination_root)
+        end
+      end
+
+      def ruby_version
+        Hashira::Rails::RUBY_VERSION
+      end
     end
   end
 end

@@ -3,11 +3,7 @@ require "spec_helper"
 RSpec.describe "The Heroku generator", type: :feature do
   context "regardless of the given Heroku app name" do
     before(:all) do
-      run_hashira_generator(
-        :heroku,
-        app_name: app_name,
-        slack_webhook_url: "whatever",
-      )
+      run_hashira_generator(:heroku, slack_webhook_url: "whatever")
     end
 
     it "adds app.json to the project" do
@@ -31,27 +27,6 @@ RSpec.describe "The Heroku generator", type: :feature do
         remote: "production",
       )
     end
-  end
-
-  context "using the default Heroku app name" do
-    before(:all) do
-      run_hashira_generator(
-        :heroku,
-        app_name: app_name,
-        slack_webhook_url: "whatever",
-      )
-    end
-
-    it "creates staging and production Heroku apps" do
-      expect(FakeHeroku).to have_created_app(
-        heroku_app_name,
-        environment: "staging",
-      )
-      expect(FakeHeroku).to have_created_app(
-        heroku_app_name,
-        environment: "production",
-      )
-    end
 
     it "generates APPLICATION_HOST for both apps" do
       expect(FakeHeroku).to have_configured_variable(
@@ -64,8 +39,33 @@ RSpec.describe "The Heroku generator", type: :feature do
       )
     end
 
+    it "adds a Procfile" do
+      expect(file_in_app("Procfile")).to exist
+    end
+  end
+
+  context "using the default Heroku app name" do
+    before(:all) do
+      run_hashira_generator(
+        :heroku,
+        app_name: "some_app",
+        slack_webhook_url: "whatever",
+      )
+    end
+
+    it "creates staging and production Heroku apps" do
+      expect(FakeHeroku).to have_created_app(
+        "some-app",
+        environment: "staging",
+      )
+      expect(FakeHeroku).to have_created_app(
+        "some-app",
+        environment: "production",
+      )
+    end
+
     it "creates the Heroku pipeline consisting of both apps" do
-      expect(FakeHeroku).to have_set_up_pipeline_for(heroku_app_name)
+      expect(FakeHeroku).to have_set_up_pipeline_for("some-app")
     end
 
     it "adds a script so that CircleCI can deploy the app easily" do
@@ -79,7 +79,7 @@ RSpec.describe "The Heroku generator", type: :feature do
 
         set -e
 
-        APP="#{heroku_app_name}-staging"
+        APP="some-app-staging"
 
         git remote add heroku "git@heroku.com:${APP}.git"
         git push heroku "${CIRCLE_SHA1}:master"
@@ -88,8 +88,35 @@ RSpec.describe "The Heroku generator", type: :feature do
       TEXT
     end
 
-    def heroku_app_name
-      app_name.dasherize
+    it "adds a deployment section to the README" do
+      expect(file_in_app("README.md")).to contain_text(<<-TEXT)
+## Deployment
+
+There are two versions of the app, staging and production, and they are hosted
+on [Heroku].
+
+You will first need to sign up for a Heroku account and be given access to these
+apps before you can deploy.
+
+When you have access, run these commands:
+
+    heroku git:remote -r staging -a some-app-staging
+    heroku git:remote -r production -a some-app-production
+
+This will let you interact with the staging and production apps from the command
+line.
+
+The staging app will be deployed automatically when you push to the `master`
+branch. However, if you need to deploy it manually for some reason, you can say:
+
+    bin/deploy staging
+
+And when you want to deploy to production, you can say:
+
+    bin/deploy production
+
+[Heroku]: http://heroku.com
+      TEXT
     end
   end
 
@@ -98,34 +125,23 @@ RSpec.describe "The Heroku generator", type: :feature do
       run_hashira_generator(
         :heroku,
         slack_webhook_url: "whatever",
-        heroku_app_name: heroku_app_name,
+        heroku_app_name: "custom-app",
       )
     end
 
     it "creates staging and production Heroku apps" do
       expect(FakeHeroku).to have_created_app(
-        heroku_app_name,
+        "custom-app",
         environment: "staging",
       )
       expect(FakeHeroku).to have_created_app(
-        heroku_app_name,
+        "custom-app",
         environment: "production",
       )
     end
 
-    it "generates APPLICATION_HOST for both apps" do
-      expect(FakeHeroku).to have_configured_variable(
-        "APPLICATION_HOST",
-        remote: "staging",
-      )
-      expect(FakeHeroku).to have_configured_variable(
-        "APPLICATION_HOST",
-        remote: "production",
-      )
-    end
-
     it "creates the Heroku pipeline consisting of both apps" do
-      expect(FakeHeroku).to have_set_up_pipeline_for(heroku_app_name)
+      expect(FakeHeroku).to have_set_up_pipeline_for("custom-app")
     end
 
     it "adds a script so that CircleCI can deploy the app easily" do
@@ -139,7 +155,7 @@ RSpec.describe "The Heroku generator", type: :feature do
 
         set -e
 
-        APP="#{heroku_app_name}-staging"
+        APP="custom-app-staging"
 
         git remote add heroku "git@heroku.com:${APP}.git"
         git push heroku "${CIRCLE_SHA1}:master"
@@ -148,8 +164,35 @@ RSpec.describe "The Heroku generator", type: :feature do
       TEXT
     end
 
-    def heroku_app_name
-      "custom-app"
+    it "adds some additions to the README" do
+      expect(file_in_app("README.md")).to contain_text(<<-TEXT)
+## Deployment
+
+There are two versions of the app, staging and production, and they are hosted
+on [Heroku].
+
+You will first need to sign up for a Heroku account and be given access to these
+apps before you can deploy.
+
+When you have access, run these commands:
+
+    heroku git:remote -r staging -a custom-app-staging
+    heroku git:remote -r production -a custom-app-production
+
+This will let you interact with the staging and production apps from the command
+line.
+
+The staging app will be deployed automatically when you push to the `master`
+branch. However, if you need to deploy it manually for some reason, you can say:
+
+    bin/deploy staging
+
+And when you want to deploy to production, you can say:
+
+    bin/deploy production
+
+[Heroku]: http://heroku.com
+      TEXT
     end
   end
 end

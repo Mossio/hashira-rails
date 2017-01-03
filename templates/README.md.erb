@@ -12,25 +12,72 @@
 
 ## Architecture
 
-* **Backend:** Ruby on Rails 4, PostgreSQL, Redis (for background jobs)
-* **Frontend:** ES2015 (transpiled using [Babel] to ES5)
-
-[Babel]: http://babeljs.io
+* **Backend:** Ruby on Rails 5, PostgreSQL, Redis (for background jobs)
+* **Frontend:** ES5, using custom object-oriented JavaScript inspired by
+  Backbone, React, and Angular
 
 ## Getting started
 
-After you've cloned this repo, run the following script to install backend and
-frontend dependencies and set up the database:
+In order to develop on and run the app, you will need to have Ruby <%= ruby_version %>,
+Postgres, and Redis installed on your computer first.
+
+### Installing Ruby
+
+To install Ruby you'll need a version manager. We recommend using [rbenv].
+You can easily install it by running:
+
+    brew install rbenv ruby-build
+
+[rbenv]: https://github.com/rbenv/rbenv
+
+After you do this, you can install Ruby <%= ruby_version %> by saying:
+
+    brew install openssl
+    rbenv install <%= ruby_version %>
+
+If this gives you an error, then your installation of `ruby-build` may not be
+up to date. A command will be given at the end; run this and then you can run
+the `rbenv install` command again.
+
+### Installing Postgres and Redis
+
+To install Postgres and Redis, say:
+
+    brew install postgresql redis
+    brew services postgresql start
+    brew services redis start
+
+### Installing the rest of the dependencies
+
+Then, clone this repo, navigate to where you cloned the repo, and run the
+following script to install backend and frontend dependencies and set up the
+database:
 
     bin/setup
 
-This assumes that you have Ruby, PostgreSQL, and Redis installed on your
-computer. If you don't, then you'll be given the appropriate instructions to
-install these dependencies first.
+Note that if you have macOS Sierra, this may give you a compilation error. This
+is a known error, and you can use the following fix to get around this:
+
+    brew install libxml2 libxslt
+    brew link libxml2
+    brew link libxslt
+    bundle config build.nokogiri --use-system-libraries --with-xml2-config=/usr/local/opt/libxml2 --with-xslt-config=/usr/local/opt/xslt
+
+Now try running `bin/setup` again.
+
+## Running the app
 
 To run the app, use [Heroku Local]:
 
     heroku local
+
+You'll know when the app is started if you see a line that looks something like:
+
+    2:42:18 PM web.1    |  [2328] * Listening on tcp://0.0.0.0:3000
+
+Now you can visit the app by going to:
+
+    http://localhost:3000
 
 [Heroku Local]: https://devcenter.heroku.com/articles/heroku-local
 
@@ -39,7 +86,7 @@ To run the app, use [Heroku Local]:
 * The mainline branch is `master`.
 * Create a card for a feature or bugfix on Trello.
 * Cut feature or bugfix branches off of `master`.
-* Write tests.
+* Write tests if you are updating backend code.
 * Create pull requests on GitHub and get others to review your work.
 * Rebase and squash your commits if needed to prevent cluttering up the history
   with needless commits.
@@ -68,15 +115,3 @@ Configuration is kept in [`.rubocop.yml`](.rubocop.yml) and
 
 [Rubocop]: https://github.com/bbatsov/rubocop
 [ESLint]: http://eslint.org/
-
-## Deployment
-
-There are two versions of the app, staging and production, and they are hosted
-on [Heroku].
-
-To deploy staging, choose one of:
-
-    bin/deploy staging
-    bin/deploy production
-
-[Heroku]: http://heroku.com

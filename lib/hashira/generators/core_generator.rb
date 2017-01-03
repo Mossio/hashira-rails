@@ -8,16 +8,20 @@ module Hashira
     end
 
     def establish_ruby_version
-      create_file ".ruby-version", "#{Hashira::Rails::RUBY_VERSION}\n"
+      create_file ".ruby-version", "#{ruby_version}\n"
     end
 
     def update_gemfile
       Hashira::Rails::Gemfile.open(destination_root) do |gemfile|
-        gemfile.set_ruby Hashira::Rails::RUBY_VERSION
+        gemfile.set_ruby ruby_version
         gemfile.replace_gem "rails", version: Hashira::Rails::RAILS_VERSION
         gemfile.remove_gem "jbuilder"
         gemfile.organize
       end
+    end
+
+    def replace_readme
+      template "README.md.erb", "README.md", force: true
     end
 
     def replace_setup_script
