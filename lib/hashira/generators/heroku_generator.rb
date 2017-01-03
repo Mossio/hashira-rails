@@ -74,6 +74,10 @@ And when you want to deploy to production, you can say:
       TEXT
     end
 
+    def add_procfile
+      copy_file "Procfile", "Procfile"
+    end
+
     private
 
     def heroku_app_name
