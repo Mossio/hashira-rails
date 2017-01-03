@@ -43,7 +43,7 @@ module HashiraTestHelpers
     end
   end
 
-  def run_hashira_generator(name, options = {})
+  def run_hashira_generator(name, options = {}, &block)
     app_name = options.delete(:app_name) || self.app_name
     args = options.map do |key, value|
       "--#{key.to_s.dasherize}=#{value.inspect}"
@@ -54,6 +54,11 @@ module HashiraTestHelpers
     drop_app_database!
     copy_existing_app_to_working_directory
     install_app_dependencies!
+
+    if block_given?
+      yield
+    end
+
     set_app_name(app_name)
 
     if name != :core
