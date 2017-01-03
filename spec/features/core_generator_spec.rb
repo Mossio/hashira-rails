@@ -7,7 +7,11 @@ RSpec.describe "The core generator", type: :feature do
 
   it "puts dotfiles in place" do
     expect(file_in_app(".ctags")).to exist
-    expect(file_in_app(".env")).to exist
+    expect(file_in_app(".env.example")).to exist
+  end
+
+  it "sets a default port in .env.example" do
+    expect(file_in_app(".env.example")).to contain_line("PORT=3000")
   end
 
   it "configures the app to use the same Ruby version that the gem does" do
@@ -162,5 +166,15 @@ RSpec.describe "The core generator", type: :feature do
 
   it "initializes the git repo" do
     expect(directory_in_app(".git")).to exist
+  end
+end
+
+RSpec.describe "The core generator", "with a port specified", type: :feature do
+  before(:all) do
+    run_hashira_generator(:core, port: 5000)
+  end
+
+  it "sets the given port in .env.example" do
+    expect(file_in_app(".env.example")).to contain_line("PORT=5000")
   end
 end

@@ -3,8 +3,17 @@ require "hashira/rails/gemfile"
 
 module Hashira
   class CoreGenerator < Hashira::Rails::GeneratorBase
+    class_option :port,
+      type: :numeric,
+      desc: "The port that you want the app to run on.",
+      default: 3000
+
     def copy_dotfiles
       directory "dotfiles", "."
+    end
+
+    def add_port_to_env_example
+      template "env_example.erb", ".env.example", force: true
     end
 
     def establish_ruby_version
@@ -139,6 +148,12 @@ module Hashira
 
     def install_gems
       run_bundle
+    end
+
+    private
+
+    def port
+      options[:port]
     end
   end
 end
