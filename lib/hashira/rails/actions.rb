@@ -5,6 +5,8 @@ module Hashira
     module Actions
       class IrreversibleAction < StandardError; end
 
+      protected
+
       # TODO: This should be replaced with gsub_file
       def replace_in_file(relative_path, find, replace)
         path = File.join(destination_root, relative_path)
@@ -63,6 +65,10 @@ module Hashira
 
       def set_executable(relative_path)
         FileUtils.chmod_R("+x", path_to_file(relative_path))
+      end
+
+      def updating_gemfile(&block)
+        Hashira::Rails::Gemfile.open(destination_root, &block)
       end
 
       def path_to_file(relative_path)

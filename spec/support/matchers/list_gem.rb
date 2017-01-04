@@ -1,6 +1,12 @@
 module Hashira
   module Test
     module Matchers
+      def self.stringify_keys(hash)
+        hash.reduce({}) do |new_hash, (key, value)|
+          new_hash.merge(key.to_s => value)
+        end
+      end
+
       def list_gem(gem_name, version: nil, **options)
         ListGemMatcher.new(gem_name, version, options)
       end
@@ -10,7 +16,7 @@ module Hashira
           @expected_dependency = Bundler::Dependency.new(
             gem_name,
             version,
-            options,
+            Matchers.stringify_keys(options),
           )
         end
 
@@ -23,12 +29,11 @@ module Hashira
         end
 
         def failure_message
-          "Expected Gemfile to contain #{expected_dependency}, but it did not."
+          "Expected Gemfile to #{expectation}, but it did not."
         end
 
         def failure_message_when_negated
-          "Expected Gemfile not to contain gem " +
-            "#{expected_dependency.name.inspect}, but it did."
+          "Expected Gemfile not to #{expectation}, but it did."
         end
 
         private
@@ -50,6 +55,21 @@ module Hashira
             ) &&
             dependency1.autorequire == dependency2.autorequire &&
             dependency1.groups == dependency2.groups
+        end
+
+        def expectation
+          groups = expected_dependency.groups - [:default]
+          message = "contain #{expected_dependency.name.inspect}"
+
+          if !expected_dependency.requirement.none?
+            message << " (#{expected_dependency.version})"
+          end
+
+          if groups.any?
+            message << " in groups #{groups.map(&:inspect).to_sentence}"
+          end
+
+          message
         end
       end
     end

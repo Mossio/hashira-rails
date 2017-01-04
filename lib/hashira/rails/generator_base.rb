@@ -16,23 +16,7 @@ module Hashira
 
       def self.inherited(subclass)
         super
-
         subclass.source_root(TEMPLATES_DIRECTORY)
-
-        # Thor runs commands in the order that they were defined,
-        # so define this method dynamically so as to place it after any
-        # methods that the subclass may already have
-        subclass.class_eval do
-          def run_bundle
-            if !parent_generator
-              bundle_command("install")
-            end
-          end
-
-          def run_after_bundle_callbacks
-            @after_bundle_callbacks.each(&:call)
-          end
-        end
       end
 
       attr_writer :parent_generator
@@ -41,11 +25,9 @@ module Hashira
 
       attr_reader :parent_generator
 
-      def after_bundle(&block)
-        if parent_generator
-          parent_generator.after_bundle(&block)
-        else
-          super
+      def run_bundle_install
+        if !parent_generator
+          bundle_command("install")
         end
       end
 

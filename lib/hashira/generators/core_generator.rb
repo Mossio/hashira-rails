@@ -21,7 +21,7 @@ module Hashira
     end
 
     def update_gemfile
-      Hashira::Rails::Gemfile.open(destination_root) do |gemfile|
+      updating_gemfile do |gemfile|
         gemfile.set_ruby ruby_version
         gemfile.replace_gem "rails", version: Hashira::Rails::RAILS_VERSION
         gemfile.remove_gem "jbuilder"
@@ -147,7 +147,7 @@ module Hashira
     end
 
     def install_gems
-      run_bundle
+      run_bundle_install
     end
 
     private
