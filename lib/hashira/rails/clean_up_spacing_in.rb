@@ -57,7 +57,7 @@ module Hashira
 
             content << stringify_tree(node)
 
-            if index < (node.length - 2)
+            if index < (tree.length - 2)
               content << "\n"
             end
           elsif node != "\n"
