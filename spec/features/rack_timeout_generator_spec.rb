@@ -6,7 +6,7 @@ RSpec.describe "The rack-timeout generator", type: :feature do
   end
 
   it "adds the rack-timeout gem to the Gemfile" do
-    expect(gemfile).to list_gem("rack-timeout")
+    expect(gemfile).to list_gem("rack-timeout", group: :production)
   end
 
   it "configures the production environment to set a timeout" do

@@ -4,7 +4,7 @@ module Hashira
   class RackTimeoutGenerator < Hashira::Rails::GeneratorBase
     def add_rack_timeout_to_gemfile
       updating_gemfile do |gemfile|
-        gemfile.add_gem "rack-timeout"
+        gemfile.add_gem "rack-timeout", group: :production
         gemfile.organize
       end
 
