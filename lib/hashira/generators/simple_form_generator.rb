@@ -7,9 +7,7 @@ module Hashira
         gemfile.add_gem "simple_form"
         gemfile.organize
       end
-    end
 
-    def install_gem
       run_bundle_install
     end
 
