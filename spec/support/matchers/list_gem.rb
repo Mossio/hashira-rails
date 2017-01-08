@@ -66,7 +66,7 @@ module Hashira
           end
 
           if groups.any?
-            message << " in groups #{groups.map(&:inspect).to_sentence}"
+            message << " in groups: #{groups.inspect}"
           end
 
           message
