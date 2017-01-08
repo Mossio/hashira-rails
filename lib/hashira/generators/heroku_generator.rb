@@ -74,6 +74,20 @@ And when you want to deploy to production, you can say:
       TEXT
     end
 
+    def set_application_host_in_production
+      text = <<-TEXT.rstrip
+
+
+if ENV.fetch("HEROKU_APP_NAME", "").include?("staging-pr-")
+  ENV["APPLICATION_HOST"] = ENV["HEROKU_APP_NAME"] + ".herokuapp.com"
+end
+      TEXT
+
+      insert_into_file "config/environments/production.rb",
+        text,
+        after: /\nend\Z/
+    end
+
     def add_procfile
       copy_file "Procfile", "Procfile"
     end

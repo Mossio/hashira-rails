@@ -41,6 +41,19 @@ RSpec.describe "The Heroku generator", "regardless of the given Heroku app name"
   it "adds a Procfile" do
     expect(file_in_app("Procfile")).to exist
   end
+
+  it "sets APPLICATION_HOST in production.rb" do
+    production_file = file_in_app("config/environments/production.rb")
+
+    expect(production_file).to contain_text(<<~TEXT.rstrip)
+        config.active_record.dump_schema_after_migration = false
+      end
+
+      if ENV.fetch("HEROKU_APP_NAME", "").include?("staging-pr-")
+        ENV["APPLICATION_HOST"] = ENV["HEROKU_APP_NAME"] + ".herokuapp.com"
+      end
+    TEXT
+  end
 end
 
 RSpec.describe "The Heroku generator", "using the default Heroku app name", type: :feature do
