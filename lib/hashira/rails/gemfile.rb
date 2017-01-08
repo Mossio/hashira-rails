@@ -124,7 +124,19 @@ module Hashira
         end
 
         if source
-          parts << "path: #{source.path.to_s.inspect}"
+          if source.is_a?(Bundler::Source::Git)
+            parts << "git: #{source.uri.inspect}"
+
+            if source.branch
+              parts << "branch: #{source.branch.inspect}"
+            end
+
+            if source.ref != "master"
+              parts << "ref: #{source.ref.inspect}"
+            end
+          else
+            parts << "path: #{source.path.to_s.inspect}"
+          end
         end
 
         parts.compact.join(", ")
