@@ -1,8 +1,8 @@
 require "spec_helper"
 
-RSpec.describe "The rack-timeout generator", type: :feature do
+RSpec.describe "The timeout generator", type: :feature do
   before(:all) do
-    run_hashira_generator(:rack_timeout)
+    run_hashira_generator(:timeout)
   end
 
   it "adds the rack-timeout gem to the Gemfile" do
