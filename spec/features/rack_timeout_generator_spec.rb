@@ -10,8 +10,13 @@ RSpec.describe "The rack-timeout generator", type: :feature do
   end
 
   it "configures the production environment to set a timeout" do
-    expect(file_in_app("config/environments/production.rb")).to contain_line(
-      'Rack::Timeout.timeout = ENV.fetch("RACK_TIMEOUT", 10).to_i'
-    )
+    production_file = file_in_app("config/environments/production.rb")
+
+    expect(production_file).to contain_text(<<~TEXT.strip)
+        config.active_record.dump_schema_after_migration = false
+      end
+
+      Rack::Timeout.timeout = ENV.fetch("RACK_TIMEOUT", 10).to_i
+    TEXT
   end
 end
